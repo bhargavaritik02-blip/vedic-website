@@ -1,180 +1,142 @@
-import { useState, useRef, useEffect, useCallback } from 'react';
-import { motion } from 'motion/react';
-import { Star, Clock, MapPin, Calendar, User, Sparkles, Loader2, ArrowRight, Languages } from 'lucide-react';
-import { GoogleGenAI } from "@google/genai";
-import ReactMarkdown from 'react-markdown';
+import { useState, useRef, useEffect } from 'react';
+import { motion, AnimatePresence } from 'motion/react';
+import { Star, Calendar, Languages, Loader2, ArrowRight } from 'lucide-react';
 import Header from '../components/Header';
 import SEO from '../components/SEO';
-import { ErrorBoundary } from '../components/ErrorBoundary';
 
-interface PanchangData {
-  tithi: string;
-  nakshatra: string;
-  yoga: string;
-  karana: string;
-  rashi: string;
-  rashiInsight: string;
-}
+const zodiacSigns = [
+  { value: 'Aries', label: 'Aries (Mesh)', hindi: 'मेष', roman: 'Mesh' },
+  { value: 'Taurus', label: 'Taurus (Vrishabha)', hindi: 'वृषभ', roman: 'Vrishabha' },
+  { value: 'Gemini', label: 'Gemini (Mithun)', hindi: 'मिथुन', roman: 'Mithun' },
+  { value: 'Cancer', label: 'Cancer (Karka)', hindi: 'कर्क', roman: 'Kark' },
+  { value: 'Leo', label: 'Leo (Simha)', hindi: 'सिंह', roman: 'Simha' },
+  { value: 'Virgo', label: 'Virgo (Kanya)', hindi: 'कन्या', roman: 'Kanya' },
+  { value: 'Libra', label: 'Libra (Tula)', hindi: 'तुला', roman: 'Tula' },
+  { value: 'Scorpio', label: 'Scorpio (Vrishchika)', hindi: 'वृश्चिक', roman: 'Vrishchika' },
+  { value: 'Sagittarius', label: 'Sagittarius (Dhanu)', hindi: 'धनु', roman: 'Dhanu' },
+  { value: 'Capricorn', label: 'Capricorn (Makar)', hindi: 'मकर', roman: 'Makar' },
+  { value: 'Aquarius', label: 'Aquarius (Kumbh)', hindi: 'कुंभ', roman: 'Kumbh' },
+  { value: 'Pisces', label: 'Pisces (Meen)', hindi: 'मीन', roman: 'Meen' }
+];
 
-const ThrowAsyncError = ({ error }: { error: Error }) => {
-  throw error;
+const readings = {
+  English: [
+    "Today brings new opportunities for growth. Financially, you will see a positive shift. Keep a balanced diet to maintain health and ensure you get enough rest.",
+    "Your hard work is finally paying off. Relationships will bring you joy and peace today. Avoid overthinking and stay grounded to make the best decisions.",
+    "A wonderful day for creative endeavors. You might receive some unexpected good news regarding your career. Health looks stable, but remember to stay hydrated.",
+    "Be cautious in your communication today to avoid misunderstandings. Progress in your profession is visible. Spend quality time with family to recharge your mental energy.",
+    "Expect a surge of positive energy today. Monetary gains are highly likely from past investments. It's a great day to start a new fitness routine or spiritual practice."
+  ],
+  Hindi: [
+    "आज आपके लिए विकास के नए अवसर लेकर आया है। आर्थिक रूप से सकारात्मक बदलाव देखने को मिलेगा। स्वास्थ्य बनाए रखने के लिए संतुलित आहार लें और पर्याप्त आराम करें।",
+    "आपकी मेहनत आखिरकार रंग ला रही है। आज रिश्तों में खुशी और शांति मिलेगी। ज्यादा सोचने से बचें और बेहतर निर्णय लेने के लिए जमीन से जुड़े रहें।",
+    "रचनात्मक कार्यों के लिए यह एक शानदार दिन है। आपको अपने करियर के संबंध में कोई अप्रत्याशित शुभ समाचार मिल सकता है। स्वास्थ्य स्थिर है, लेकिन हाइड्रेटेड रहना न भूलें।",
+    "गलतफहमियों से बचने के लिए आज बातचीत में सावधानी बरतें। आपके पेशे में प्रगति दिख रही है। अपनी मानसिक ऊर्जा को रिचार्ज करने के लिए परिवार के साथ गुणवत्तापूर्ण समय बिताएं।",
+    "आज सकारात्मक ऊर्जा के संचार की अपेक्षा करें। पिछले निवेशों से धन लाभ होने की अत्यधिक संभावना है। नई फिटनेस दिनचर्या या आध्यात्मिक अभ्यास शुरू करने के लिए यह एक अच्छा दिन है।"
+  ],
+  'Roman Hindi (Hinglish)': [
+    "Aaj ka din aapke liye development ke naye opportunities laayega. Financially, positive changes dekhe jayenge. Health maintain karne ke liye balanced diet len aur aaram karein.",
+    "Aapki mehnat aakhirkaar rang la rahi hai. Relationships mein aaj khushiyan aur shanti naseeb hogi. Jyada overthink na karein aur best decisions lene ke liye shaant rahein.",
+    "Creative kaam ke liye aaj ka din bohot badhiya hai. Career ke mamle mein unexpected good news mil sakti hai. Health stable rahegi, bas hydrated rehna na bhoolein.",
+    "Misunderstandings se bachne ke liye aaj communication mein dhyan rakhein. Profession mein progress dikh rahi hai. Mental energy recharge karne ke liye family ke saath quality time spend karein.",
+    "Aaj positive energy ka flow kaafi accha rahega. Past investments se monetary gains hone ke pure chances hain. Naya fitness routine ya spiritual practice start karne ke liye acha din hai."
+  ]
+};
+
+const luckyColors = ["Red", "Blue", "Green", "Yellow", "Orange", "White", "Pink", "Purple", "Brown", "Gold"];
+const luckyNumbers = [1, 2, 3, 4, 5, 6, 7, 8, 9, 11, 21, 33];
+
+const generateRashifalData = (rashiValue: string, language: string) => {
+  const rashi = zodiacSigns.find(z => z.value === rashiValue) || zodiacSigns[0];
+  const date = new Date();
+  const dayOfYear = Math.floor((date.getTime() - new Date(date.getFullYear(), 0, 0).getTime()) / 1000 / 60 / 60 / 24);
+  
+  const rashiIndex = zodiacSigns.findIndex(z => z.value === rashiValue);
+  
+  const readingTarget = (rashiIndex + dayOfYear) % 5;
+  const colorTarget = (rashiIndex + dayOfYear) % luckyColors.length;
+  const numberTarget = (rashiIndex + dayOfYear) % luckyNumbers.length;
+  
+  let content = "";
+  let heading = "";
+  let colorLabel = "Lucky Color";
+  let numberLabel = "Lucky Number";
+  
+  if (language === "Hindi") {
+    heading = `आज का ${rashi.hindi} राशिफल`;
+    content = readings.Hindi[readingTarget];
+    colorLabel = "शुभ रंग";
+    numberLabel = "शुभ अंक";
+  } else if (language === "Roman Hindi (Hinglish)") {
+    heading = `Aaj Ka ${rashi.roman} Rashifal`;
+    content = readings['Roman Hindi (Hinglish)'][readingTarget];
+    colorLabel = "Lucky Color";
+    numberLabel = "Lucky Number";
+  } else {
+    heading = `Today's ${rashi.value} Horoscope`;
+    content = readings.English[readingTarget];
+  }
+  
+  return {
+    heading,
+    content,
+    luckyColor: luckyColors[colorTarget],
+    luckyNumber: luckyNumbers[numberTarget],
+    rashiLabel: rashi.label,
+    colorLabel,
+    numberLabel
+  };
 };
 
 export default function Horoscope() {
   const [formData, setFormData] = useState({
-    name: '',
-    dob: '',
-    tob: '',
-    place: '',
-    focus: 'general',
+    rashi: 'Aries',
     language: 'English'
   });
   
   const [loading, setLoading] = useState(false);
-  const [reading, setReading] = useState<string | null>(null);
-  const [formError, setFormError] = useState<string | null>(null);
-  const [panchang, setPanchang] = useState<PanchangData | null>(null);
-  const [loadingPanchang, setLoadingPanchang] = useState(false);
-  
-  const [panchangError, setPanchangError] = useState<Error | null>(null);
-  const [readingError, setReadingError] = useState<Error | null>(null);
+  const [result, setResult] = useState<ReturnType<typeof generateRashifalData> | null>(null);
   
   const resultRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (reading && resultRef.current) {
+    if (result && resultRef.current) {
       resultRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
-  }, [reading]);
-
-  const fetchPanchang = useCallback(async () => {
-    setLoadingPanchang(true);
-    setPanchangError(null);
-    try {
-      if (!process.env.GEMINI_API_KEY) {
-        throw new Error("API configuration missing.");
-      }
-      const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
-      const prompt = `Provide today's Vedic Panchang and Moon's current Rashi for ${new Date().toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata', weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}. 
-Return the response ONLY as a valid JSON object with the following structure:
-{
-  "tithi": "...",
-  "nakshatra": "...",
-  "yoga": "...",
-  "karana": "...",
-  "rashi": "...",
-  "rashiInsight": "1-sentence general insight for the Moon's current Rashi"
-}
-Do not include any markdown formatting like \`\`\`json or \`\`\`. Just output the raw JSON object.`;
-      
-      const response = await ai.models.generateContent({
-        model: "gemini-3-flash-preview",
-        contents: prompt,
-      });
-
-      if (response.text) {
-        try {
-          const cleanJson = response.text.replace(/```json/g, '').replace(/```/g, '').trim();
-          const parsedData = JSON.parse(cleanJson);
-          setPanchang(parsedData);
-        } catch (e) {
-          throw new Error("Failed to parse celestial data. Please try again.");
-        }
-      }
-    } catch (err: any) {
-      console.error("Panchang generation error:", err);
-      setPanchangError(err instanceof Error ? err : new Error(String(err)));
-    } finally {
-      setLoadingPanchang(false);
-    }
-  }, []);
-
-  useEffect(() => {
-    fetchPanchang();
-  }, [fetchPanchang]);
+  }, [result]);
 
   const structuredData = {
     "@context": "https://schema.org",
     "@type": "WebPage",
-    "name": "Free Personalized Vedic Horoscope Reading | Astrologer Mannu Shastri Ji",
-    "description": "Get a free, instant personalized Vedic astrology reading based on your exact birth details.",
+    "name": "Daily Rashifal & Free Horoscope Reading | Astrologer Mannu Shastri Ji",
+    "description": "Get your personalized Daily Rashifal (Horoscope) in English, Hindi, and Roman Hindi. Free daily astrology insights for all Zodiac signs.",
     "url": "https://ais-pre-yiujbuguleggsehuv2syxt-446001962622.asia-east1.run.app/horoscope"
   };
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    
-    if (!formData.name || !formData.dob || !formData.place) {
-      setFormError("Please fill in at least your name, date of birth, and place of birth.");
-      return;
-    }
-    
     setLoading(true);
-    setFormError(null);
-    setReadingError(null);
-    setReading(null);
+    setResult(null);
 
-    try {
-      if (!process.env.GEMINI_API_KEY) {
-        throw new Error("API configuration is missing. Cannot generate reading at this time.");
-      }
-
-      const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
-      
-      const prompt = `
-You are speaking as Astrologer Mannu Shastri Ji, a highly respected and experienced Vedic astrologer from India with 35+ years of practice, specializing in relationship and life problem solutions. 
-
-A client has requested a quick personalized Vedic astrology assessment.
-Here are their birth details:
-- Name: ${formData.name}
-- Date of Birth: ${formData.dob}
-- Time of Birth: ${formData.tob || 'Unknown time'}
-- Place of Birth: ${formData.place}
-- Area of Focus: ${formData.focus}
-- Preferred Language: ${formData.language}
-- Current Date of Reading: ${new Date().toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata', weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
-
-Please provide an insightful, empathetic, and encouraging reading (around 400-500 words).
-IMPORTANT: You MUST write the ENTIRE reading in the specified language: "${formData.language}". Do NOT use English if Hindi or Roman Hindi (Hinglish) is selected.
-Structure the response with clear headings (translated to the chosen language if applicable):
-1. **Today's Panchang & Your Rashi (Aaj ki Tithi aur Rashi)**: Start by clearly stating today's current Vedic Tithi (Lunar day) and the user's Rashi (Moon Sign/Zodiac) deduced from their birth details.
-2. **Astrological Profile**: Briefly assess what their basic chart implies (be insightful and mystical but positive).
-3. **Current Life Phase & Daily Insight (Today's Transits)**: Provide insights into what cosmic energies they are currently navigating, specifically focusing on how today's planetary transits will affect their day. Make it feel like a fresh daily update.
-4. **Focus Insight (${formData.focus})**: Give direct guidance related to their selected area of focus.
-5. **Remedial Guidance**: Suggest 1-2 simple, practical Vedic remedies for today/current phase.
-
-Maintain a warm, reassuring, and professional tone. Make them feel understood. Use Markdown for formatting.
-`;
-
-      const response = await ai.models.generateContent({
-        model: "gemini-3-flash-preview",
-        contents: prompt,
-      });
-
-      if (response.text) {
-        setReading(response.text);
-      } else {
-        throw new Error("Failed to generate reading due to cosmic interference. Please try again.");
-      }
-    } catch (err: any) {
-      console.error("Horoscope generation error:", err);
-      setReadingError(err instanceof Error ? err : new Error(String(err)));
-    } finally {
+    // Fake 2 second delay for reading the stars
+    setTimeout(() => {
+      const generated = generateRashifalData(formData.rashi, formData.language);
+      setResult(generated);
       setLoading(false);
-    }
+    }, 2000);
   };
 
   return (
     <div className="bg-[#050505] min-h-screen text-zinc-200 font-sans selection:bg-orange-500/30">
       <SEO 
-        title="Free Vedic Horoscope Reading | Astrologer Mannu Shastri Ji"
-        description="Get an instant personalized Vedic horoscope reading by providing your birth details. Discover insights into your love life, career, and future."
-        keywords="free horoscope, vedic astrology reading, online kundli, love horoscope, career astrology, future prediction"
+        title="Daily Rashifal & Horoscope Today | Astrologer Mannu Shastri Ji"
+        description="Read your free daily Rashifal (Horoscope) in English, Hindi, and Hinglish. Get daily astrology insights, lucky colors, and numbers for your zodiac sign."
+        keywords="daily rashifal, today horoscope india, free kundli reading, rashifal today hindi, astrology, zodiac signs"
         url="https://ais-pre-yiujbuguleggsehuv2syxt-446001962622.asia-east1.run.app/horoscope"
         structuredData={structuredData}
       />
@@ -184,141 +146,67 @@ Maintain a warm, reassuring, and professional tone. Make them feel understood. U
       <main className="max-w-7xl mx-auto px-4 sm:px-6 py-10 pb-24 md:pb-20">
         
         {/* Page Header */}
-        <div className="text-center max-w-3xl mx-auto mb-12">
+        <div className="text-center max-w-3xl mx-auto mb-10">
           <div className="inline-flex items-center justify-center p-3 bg-orange-500/10 rounded-full mb-6 relative group">
             <div className="absolute inset-0 bg-orange-500/20 blur-xl rounded-full group-hover:bg-orange-500/30 transition-all duration-500"></div>
-            <Sparkles className="w-8 h-8 text-orange-500 relative z-10" />
+            <Star className="w-8 h-8 text-orange-500 relative z-10" />
           </div>
-          <h1 className="text-4xl md:text-5xl font-serif text-white font-bold leading-tight mb-6">
-            Your Personal <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-amber-600">Daily Free Horoscope</span>
+          <h1 className="text-4xl md:text-5xl font-serif text-white font-bold leading-tight mb-4">
+            Today's <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-amber-600">Daily Rashifal</span>
           </h1>
-          <p className="text-lg text-zinc-400 leading-relaxed">
-            Enter your birth details below to receive a personalized, AI-powered Vedic astrology reading for today. Come back every day for a fresh daily update from the wisdom of Astrologer Mannu Shastri Ji.
+          <p className="text-lg text-zinc-400 leading-relaxed max-w-2xl mx-auto">
+            Select your Zodiac sign to receive today's personalized astrological reading. Available in English, Hindi, and Roman Hindi.
           </p>
         </div>
 
-        <div className="grid lg:grid-cols-12 gap-8 items-start">
+        <div className="grid lg:grid-cols-12 gap-8 items-start max-w-5xl mx-auto">
           
           {/* Input Form */}
           <div className="lg:col-span-5 bg-zinc-900/60 border border-zinc-800 rounded-3xl p-6 sm:p-8 relative overflow-hidden backdrop-blur-md shadow-2xl">
             <div className="absolute top-0 right-0 w-64 h-64 bg-orange-500/5 rounded-full blur-3xl pointer-events-none -translate-y-1/2 translate-x-1/2"></div>
             
             <h2 className="text-2xl font-serif text-white mb-6 flex items-center gap-2">
-              <Star className="w-5 h-5 text-orange-500" />
-              Birth Details
+              <Calendar className="w-5 h-5 text-orange-500" />
+              Select Details
             </h2>
 
-            <form onSubmit={handleSubmit} className="space-y-5 relative z-10">
+            <form onSubmit={handleSubmit} className="space-y-6 relative z-10">
               
-              {/* Name */}
-              <div className="space-y-1.5">
-                <label htmlFor="name" className="text-sm font-medium text-zinc-400 flex items-center gap-2">
-                  <User className="w-4 h-4" /> Full Name
+              {/* Rashi Selection */}
+              <div className="space-y-2">
+                <label htmlFor="rashi" className="text-sm font-medium text-zinc-400 flex items-center gap-2">
+                  <Star className="w-4 h-4" /> Zodiac Sign (Rashi)
                 </label>
-                <input 
-                  type="text" 
-                  id="name"
-                  name="name"
-                  value={formData.name}
+                <select 
+                  id="rashi"
+                  name="rashi"
+                  value={formData.rashi}
                   onChange={handleInputChange}
-                  placeholder="Enter your name"
-                  className="w-full bg-black/50 border border-zinc-700 focus:border-orange-500 focus:ring-1 focus:ring-orange-500/50 rounded-xl px-4 py-3 outline-none text-zinc-200 transition-all"
-                  required
-                />
+                  className="w-full bg-black/50 border border-zinc-700 focus:border-orange-500 focus:ring-1 focus:ring-orange-500/50 rounded-xl px-4 py-3.5 outline-none text-zinc-200 transition-all appearance-none cursor-pointer"
+                >
+                  {zodiacSigns.map(sign => (
+                    <option key={sign.value} value={sign.value}>{sign.label}</option>
+                  ))}
+                </select>
               </div>
 
-              {/* Date of Birth & Time */}
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-1.5">
-                  <label htmlFor="dob" className="text-sm font-medium text-zinc-400 flex items-center gap-2">
-                    <Calendar className="w-4 h-4" /> Date of Birth
-                  </label>
-                  <input 
-                    type="date" 
-                    id="dob"
-                    name="dob"
-                    value={formData.dob}
-                    onChange={handleInputChange}
-                    className="w-full bg-black/50 border border-zinc-700 focus:border-orange-500 focus:ring-1 focus:ring-orange-500/50 rounded-xl px-4 py-3 outline-none text-zinc-200 transition-all min-h-[50px] [color-scheme:dark]"
-                    required
-                  />
-                </div>
-                <div className="space-y-1.5">
-                  <label htmlFor="tob" className="text-sm font-medium text-zinc-400 flex items-center gap-2">
-                    <Clock className="w-4 h-4" /> Time of Birth
-                  </label>
-                  <input 
-                    type="time" 
-                    id="tob"
-                    name="tob"
-                    value={formData.tob}
-                    onChange={handleInputChange}
-                    className="w-full bg-black/50 border border-zinc-700 focus:border-orange-500 focus:ring-1 focus:ring-orange-500/50 rounded-xl px-4 py-3 outline-none text-zinc-200 transition-all min-h-[50px] [color-scheme:dark]"
-                  />
-                  <p className="text-[10px] text-zinc-500 px-1">Optional, but recommended</p>
-                </div>
-              </div>
-
-              {/* Place of Birth */}
-              <div className="space-y-1.5">
-                <label htmlFor="place" className="text-sm font-medium text-zinc-400 flex items-center gap-2">
-                  <MapPin className="w-4 h-4" /> Place of Birth
-                </label>
-                <input 
-                  type="text" 
-                  id="place"
-                  name="place"
-                  value={formData.place}
-                  onChange={handleInputChange}
-                  placeholder="City, State, Country"
-                  className="w-full bg-black/50 border border-zinc-700 focus:border-orange-500 focus:ring-1 focus:ring-orange-500/50 rounded-xl px-4 py-3 outline-none text-zinc-200 transition-all"
-                  required
-                />
-              </div>
-
-              {/* Language Preference */}
-              <div className="space-y-1.5">
+              {/* Language Selection */}
+              <div className="space-y-2">
                 <label htmlFor="language" className="text-sm font-medium text-zinc-400 flex items-center gap-2">
-                  <Languages className="w-4 h-4" /> Language
+                  <Languages className="w-4 h-4" /> Language preference
                 </label>
                 <select 
                   id="language"
                   name="language"
                   value={formData.language}
                   onChange={handleInputChange}
-                  className="w-full bg-black/50 border border-zinc-700 focus:border-orange-500 focus:ring-1 focus:ring-orange-500/50 rounded-xl px-4 py-3 outline-none text-zinc-200 transition-all appearance-none"
+                  className="w-full bg-black/50 border border-zinc-700 focus:border-orange-500 focus:ring-1 focus:ring-orange-500/50 rounded-xl px-4 py-3.5 outline-none text-zinc-200 transition-all appearance-none cursor-pointer"
                 >
                   <option value="English">English</option>
                   <option value="Hindi">Hindi (हिंदी)</option>
                   <option value="Roman Hindi (Hinglish)">Roman Hindi (Hinglish)</option>
                 </select>
               </div>
-
-              {/* Primary Focus */}
-              <div className="space-y-1.5">
-                <label htmlFor="focus" className="text-sm font-medium text-zinc-400 flex items-center gap-2">
-                  <Sparkles className="w-4 h-4" /> Focus Area
-                </label>
-                <select 
-                  id="focus"
-                  name="focus"
-                  value={formData.focus}
-                  onChange={handleInputChange}
-                  className="w-full bg-black/50 border border-zinc-700 focus:border-orange-500 focus:ring-1 focus:ring-orange-500/50 rounded-xl px-4 py-3 outline-none text-zinc-200 transition-all appearance-none"
-                >
-                  <option value="general">General Overview</option>
-                  <option value="love and relationships">Love & Relationships</option>
-                  <option value="marriage and compatibility">Marriage Prospects</option>
-                  <option value="career and finance">Career & Finance</option>
-                  <option value="health and well-being">Health & Well-being</option>
-                </select>
-              </div>
-
-              {formError && (
-                <div className="bg-red-500/10 border border-red-500/20 text-red-400 text-sm p-3 rounded-lg">
-                  {formError}
-                </div>
-              )}
 
               <button 
                 type="submit" 
@@ -328,11 +216,11 @@ Maintain a warm, reassuring, and professional tone. Make them feel understood. U
                 {loading ? (
                   <>
                     <Loader2 className="w-5 h-5 animate-spin" />
-                    Consulting the Stars...
+                    Consulting Stars...
                   </>
                 ) : (
                   <>
-                    Generate My Reading
+                    Generate Today's Rashifal
                     <ArrowRight className="w-5 h-5" />
                   </>
                 )}
@@ -341,141 +229,109 @@ Maintain a warm, reassuring, and professional tone. Make them feel understood. U
           </div>
 
           {/* Result Area */}
-          <div className="lg:col-span-7 flex flex-col h-full min-h-[500px]" ref={resultRef}>
-            <ErrorBoundary onRetry={() => setReadingError(null)}>
-              {readingError && <ThrowAsyncError error={readingError} />}
-              
-              {!reading && !loading && (
-              <div className="flex-1 border border-zinc-800 border-dashed rounded-3xl flex flex-col items-center justify-center p-8 sm:p-12 text-center bg-zinc-900/20 h-full">
-                <div className="w-16 h-16 sm:w-20 sm:h-20 bg-zinc-900 rounded-full flex items-center justify-center mb-6">
-                  <Star className="w-8 h-8 sm:w-10 sm:h-10 text-zinc-700" />
-                </div>
-                <h3 className="text-xl font-serif text-zinc-400 mb-2">Awaiting the Cosmos</h3>
-                <p className="text-zinc-500 max-w-sm mb-10">
-                  Fill out the form on the left to reveal the astrological insights mapped to your exact birth coordinates.
-                </p>
+          <div className="lg:col-span-7 flex flex-col h-full min-h-[400px]" ref={resultRef}>
+            
+            <AnimatePresence mode="wait">
+              {!result && !loading && (
+                <motion.div 
+                  key="empty"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  className="flex-1 border border-zinc-800 border-dashed rounded-3xl flex flex-col items-center justify-center p-8 sm:p-12 text-center bg-zinc-900/20 h-full"
+                >
+                  <div className="w-16 h-16 sm:w-20 sm:h-20 bg-zinc-900 rounded-full flex items-center justify-center mb-6">
+                    <Star className="w-8 h-8 sm:w-10 sm:h-10 text-zinc-700" />
+                  </div>
+                  <h3 className="text-xl font-serif text-zinc-400 mb-2">Awaiting the Cosmos</h3>
+                  <p className="text-zinc-500 max-w-sm mb-4">
+                    Select your Zodiac sign and preferred language to read today's accurate Rashifal predictions.
+                  </p>
+                </motion.div>
+              )}
 
-                {/* Daily Panchang Widget */}
-                <div className="w-full max-w-md bg-black/40 border border-orange-500/10 rounded-2xl p-6 text-left shadow-lg relative min-h-[150px]">
-                  <ErrorBoundary onRetry={fetchPanchang}>
-                    {panchangError && <ThrowAsyncError error={panchangError} />}
-                    <h4 className="text-lg font-serif text-orange-400 mb-4 flex items-center gap-2 border-b border-orange-500/10 pb-3">
-                      <Calendar className="w-5 h-5" /> Today's Panchang & Rashi
-                    </h4>
-                    {loadingPanchang ? (
-                      <div className="flex items-center gap-3 text-zinc-500 text-sm py-4">
-                        <Loader2 className="w-4 h-4 animate-spin" /> Fetching today's planetary positions...
-                      </div>
-                    ) : panchang ? (
-                      <div className="flex flex-col gap-4 mt-2">
-                        <div className="grid grid-cols-2 gap-3">
-                          <div className="bg-zinc-900/50 rounded-lg p-3 border border-zinc-800">
-                            <span className="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Tithi</span>
-                            <span className="text-sm font-medium text-zinc-200">{panchang.tithi}</span>
-                          </div>
-                          <div className="bg-zinc-900/50 rounded-lg p-3 border border-zinc-800">
-                            <span className="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Nakshatra</span>
-                            <span className="text-sm font-medium text-zinc-200">{panchang.nakshatra}</span>
-                          </div>
-                          <div className="bg-zinc-900/50 rounded-lg p-3 border border-zinc-800">
-                            <span className="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Yoga</span>
-                            <span className="text-sm font-medium text-zinc-200">{panchang.yoga}</span>
-                          </div>
-                          <div className="bg-zinc-900/50 rounded-lg p-3 border border-zinc-800">
-                            <span className="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Karana</span>
-                            <span className="text-sm font-medium text-zinc-200">{panchang.karana}</span>
-                          </div>
-                        </div>
-                        
-                        <div className="bg-orange-500/5 rounded-xl p-4 border border-orange-500/20 mt-2">
-                          <div className="flex items-center gap-2 mb-2">
-                            <Star className="w-4 h-4 text-orange-400" />
-                            <span className="font-serif text-lg text-orange-300">Moon in {panchang.rashi}</span>
-                          </div>
-                          <p className="text-base text-zinc-300 leading-relaxed">
-                            {panchang.rashiInsight}
-                          </p>
-                        </div>
-                      </div>
-                    ) : (
-                      <p className="text-sm text-zinc-500">Panchang data currently unavailable.</p>
-                    )}
-                  </ErrorBoundary>
-                </div>
-              </div>
-            )}
+              {loading && (
+                <motion.div 
+                  key="loading"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  className="flex-1 border border-orange-500/20 rounded-3xl flex flex-col items-center justify-center p-12 text-center bg-zinc-900/40 relative overflow-hidden h-full"
+                >
+                  <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/stardust.png')] opacity-20"></div>
+                  <div className="w-20 h-20 relative mb-8">
+                    <div className="absolute inset-0 border-t-2 border-orange-500 rounded-full animate-spin"></div>
+                    <div className="absolute inset-2 border-r-2 border-amber-400 rounded-full animate-spin animation-delay-200" style={{ animationDirection: 'reverse' }}></div>
+                    <div className="absolute inset-4 border-b-2 border-yellow-300 rounded-full animate-spin animation-delay-400"></div>
+                    <Star className="w-6 h-6 text-orange-500 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 animate-pulse" />
+                  </div>
+                  <h3 className="text-xl font-serif text-white mb-2">Reading Planetary Alignments...</h3>
+                  <p className="text-sm text-zinc-400 animate-pulse">
+                    Translating the cosmic energy for your Rashi...
+                  </p>
+                </motion.div>
+              )}
 
-            {loading && (
-              <div className="flex-1 border border-orange-500/20 rounded-3xl flex flex-col items-center justify-center p-12 text-center bg-zinc-900/40 relative overflow-hidden h-full">
-                <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/stardust.png')] opacity-30"></div>
-                <div className="w-24 h-24 relative mb-8">
-                  <div className="absolute inset-0 border-t-2 border-orange-500 rounded-full animate-spin"></div>
-                  <div className="absolute inset-2 border-r-2 border-amber-400 rounded-full animate-spin animation-delay-200" style={{ animationDirection: 'reverse' }}></div>
-                  <div className="absolute inset-4 border-b-2 border-yellow-300 rounded-full animate-spin animation-delay-400"></div>
-                  <Star className="w-6 h-6 text-orange-500 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 animate-pulse" />
-                </div>
-                <h3 className="text-2xl font-serif text-white mb-3">Reading Planetary Alignments...</h3>
-                <p className="text-zinc-400 max-w-md animate-pulse">
-                  Analyzing Nakshatras, calculating Dasha cycles, and charting the course of your stars. Step into the cosmic light.
-                </p>
-              </div>
-            )}
-
-            {reading && !loading && (
-              <motion.div 
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6 }}
-                className="bg-black border border-orange-500/30 rounded-3xl p-6 sm:p-10 relative overflow-hidden shadow-2xl shadow-orange-900/10"
-              >
-                {/* Decorative elements */}
-                <div className="absolute top-0 right-0 w-64 h-64 bg-orange-500/10 rounded-full blur-3xl pointer-events-none -translate-y-1/2 translate-x-1/2"></div>
-                <div className="absolute bottom-0 left-0 w-64 h-64 bg-amber-500/10 rounded-full blur-3xl pointer-events-none translate-y-1/3 -translate-x-1/3"></div>
-                
-                <div className="mb-8 border-b border-zinc-800 pb-6">
-                  <div className="flex justify-between items-start gap-4">
-                    <div>
-                      <h3 className="text-2xl font-serif text-white mb-2">Cosmic Blueprint for {formData.name}</h3>
-                      <p className="text-sm text-zinc-400 flex flex-wrap gap-x-4 gap-y-2">
-                        <span className="flex items-center gap-1.5"><Calendar className="w-3.5 h-3.5" /> {formData.dob || 'Unknown Date'}</span>
-                        {formData.tob && <span className="flex items-center gap-1.5"><Clock className="w-3.5 h-3.5" /> {formData.tob}</span>}
-                        <span className="flex items-center gap-1.5"><MapPin className="w-3.5 h-3.5" /> {formData.place || 'Unknown Place'}</span>
-                      </p>
+              {result && !loading && (
+                <motion.div 
+                  key="result"
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5 }}
+                  className="bg-zinc-900/80 border border-orange-500/30 rounded-3xl p-6 sm:p-10 relative overflow-hidden shadow-2xl"
+                >
+                  {/* Decorative Elements */}
+                  <div className="absolute top-0 right-0 w-64 h-64 bg-orange-500/10 rounded-full blur-3xl pointer-events-none -translate-y-1/2 translate-x-1/2"></div>
+                  
+                  <div className="flex flex-col mb-8 pb-6 border-b border-zinc-800">
+                    <div className="flex items-center gap-3 mb-2 justify-between">
+                      <span className="text-orange-500 text-sm font-bold tracking-wider uppercase">
+                        {new Date().toLocaleDateString('en-IN', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
+                      </span>
+                      <Star className="w-5 h-5 text-amber-500" />
                     </div>
-                    <div className="shrink-0 bg-orange-500/20 p-3 rounded-full">
-                      <Sparkles className="w-6 h-6 text-orange-500" />
+                    <h3 className="text-3xl md:text-4xl font-serif text-white font-bold leading-tight">
+                      {result.heading}
+                    </h3>
+                  </div>
+
+                  <div className="text-lg text-zinc-300 leading-relaxed mb-10">
+                    {result.content}
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-4 mb-8">
+                    <div className="bg-black/40 border border-zinc-800 rounded-2xl p-5 text-center">
+                      <span className="block text-sm text-zinc-500 mb-1">{result.colorLabel}</span>
+                      <span className="text-lg font-bold text-white capitalize">{result.luckyColor}</span>
+                    </div>
+                    <div className="bg-black/40 border border-zinc-800 rounded-2xl p-5 text-center">
+                      <span className="block text-sm text-zinc-500 mb-1">{result.numberLabel}</span>
+                      <span className="text-lg font-bold text-white max-w-full truncate">{result.luckyNumber}</span>
                     </div>
                   </div>
-                </div>
 
-                <div className="prose prose-invert prose-orange max-w-none text-zinc-300 relative z-10
-                  prose-headings:font-serif prose-headings:text-white prose-h1:text-3xl prose-h2:text-2xl prose-h3:text-xl
-                  prose-p:leading-relaxed prose-a:text-orange-400 hover:prose-a:text-orange-300
-                  prose-strong:text-zinc-100 prose-ul:my-4 prose-li:my-1"
-                >
-                  <ReactMarkdown>{reading}</ReactMarkdown>
-                </div>
+                  <div className="pt-6 border-t border-zinc-800 text-center">
+                    <p className="text-sm text-zinc-400 mb-4 italic">
+                      For a detailed, hyper-personalized reading based on your complete Kundli (Birth Chart).
+                    </p>
+                    <a 
+                      href={`https://wa.me/919928433259?text=Hello,%20I%20want%20a%20detailed%20astrology%20reading%20for%20my%20rashi%20${result.rashiLabel}.`}
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                      className="inline-flex w-full sm:w-auto items-center justify-center gap-2 bg-[#25D366] text-white hover:bg-[#20bd5a] font-bold py-3.5 px-8 rounded-xl transition-all shadow-lg"
+                    >
+                      Consult Expert on WhatsApp
+                    </a>
+                  </div>
 
-                <div className="mt-10 pt-8 border-t border-zinc-800 text-center">
-                  <p className="text-sm text-zinc-500 mb-6 italic">
-                    This is an AI-generated reading for guidance purposes. For profound karmic issues and customized 100% accurate remedies, consulting Astrologer Mannu Shastri Ji directly is highly recommended.
-                  </p>
-                  <a 
-                    href="https://wa.me/919928433259?text=I%20got%20my%20free%20horoscope.%20I%20want%20to%20discuss%20my%20reading%20further." 
-                    target="_blank" 
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center justify-center gap-2 bg-[#25D366] text-white hover:bg-[#20bd5a] font-bold py-3 px-8 rounded-xl transition-all shadow-lg shadow-[#25D366]/20"
-                  >
-                    Consult for Deeper Analysis on WhatsApp
-                  </a>
-                </div>
-              </motion.div>
-            )}
+                </motion.div>
+              )}
+            </AnimatePresence>
 
-            </ErrorBoundary>
           </div>
         </div>
       </main>
     </div>
   );
 }
+

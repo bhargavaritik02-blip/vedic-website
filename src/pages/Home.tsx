@@ -1,8 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence, useInView, animate } from 'motion/react';
-import { Link } from 'react-router-dom';
-import SearchBar from '../components/SearchBar';
 import SEO from '../components/SEO';
+import Header from '../components/Header';
 import { 
   Phone, 
   MessageCircle, 
@@ -78,7 +77,7 @@ const faqs = [
   }
 ];
 
-function FaqItem({ question, answer, isOpen, onClick }: { question: string, answer: string, isOpen: boolean, onClick: () => void }) {
+function FaqItem({ question, answer, isOpen, onClick }: { question: string, answer: string, isOpen: boolean, onClick: () => void, key?: string | number }) {
   return (
     <div className="border-b border-zinc-800/60 last:border-0">
       <button 
@@ -135,7 +134,7 @@ export default function App() {
   };
 
   return (
-    <div className="bg-[#050505] min-h-screen text-white p-4 sm:p-6 font-sans flex flex-col gap-4 max-w-[1440px] mx-auto overflow-hidden">
+    <div className="bg-[#050505] min-h-screen text-white font-sans overflow-x-hidden">
       <SEO 
         title="Astrologer Mannu Shastri | Best Love & Relationship Astrologer"
         description="With over 35 years of experience, Astrologer Mannu Shastri offers expert solutions for love, breakup, marriage, and relationship problems through Vedic Astrology."
@@ -143,29 +142,9 @@ export default function App() {
         url="https://ais-pre-yiujbuguleggsehuv2syxt-446001962622.asia-east1.run.app"
         structuredData={structuredData}
       />
-      {/* Header Row */}
-      <header className="flex justify-between items-center bg-zinc-900/50 border border-zinc-800 rounded-2xl px-6 py-4 shrink-0">
-        <div className="flex items-center gap-6">
-          <div className="flex items-center gap-3">
-            <img src="https://i.ibb.co/TBCRvsGx/PHOTO-2026-03-18-11-58-44.jpg" alt="Astrologer Mannu Shastri" className="w-10 h-10 md:w-12 md:h-12 rounded-full object-cover shadow-lg shadow-orange-900/20 border border-orange-600/50" />
-            <div>
-              <h1 className="text-xl font-bold tracking-tight">Astrologer Mannu Shastri</h1>
-              <p className="text-xs text-orange-500 uppercase tracking-widest font-semibold">Love &amp; Relationship Healer ❤️</p>
-            </div>
-          </div>
-          
-          <div className="hidden md:flex gap-4 items-center ml-8 border-l border-zinc-800 pl-8">
-            <span className="text-orange-500 font-medium text-sm border-b border-orange-500 pb-0.5">Home</span>
-            <Link to="/services" className="text-sm font-medium text-zinc-300 hover:text-orange-400 transition-colors">Services</Link>
-          </div>
-        </div>
-        
-        <div className="ml-auto flex items-center gap-8 hidden sm:flex">
-          <SearchBar />
-        </div>
+      <Header activePage="home" />
 
-      </header>
-
+      <main className="max-w-[1440px] mx-auto p-4 sm:p-6 flex flex-col gap-4 pb-24 md:pb-6">
       {/* Main Content Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 flex-grow auto-rows-auto">
         
@@ -211,6 +190,7 @@ export default function App() {
 
         {/* About Section */}
         <motion.section
+          id="about"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.2, ease: "easeOut" }}
@@ -375,7 +355,7 @@ export default function App() {
                 "After nearly 2 years of separation, my husband returned and we rebuilt our relationship. The guidance I received truly helped me stay patient and hopeful."
               </p>
               <div className="flex items-center gap-3 mt-auto relative z-10">
-                <img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&h=150&fit=crop&crop=faces&q=80" alt="R. Sharma" className="w-8 h-8 rounded-full object-cover border border-orange-500/30 blur-[1.5px]" />
+                <img loading="lazy" src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&h=150&fit=crop&crop=faces&q=80" alt="R. Sharma" className="w-8 h-8 rounded-full object-cover border border-orange-500/30 blur-[1.5px]" />
                 <p className="text-xs font-bold text-orange-400 tracking-wider">R. SHARMA, MUMBAI</p>
               </div>
               <div className="absolute -bottom-6 -right-2 text-orange-900/30 text-9xl font-serif leading-none opacity-20 pointer-events-none">"</div>
@@ -396,7 +376,7 @@ export default function App() {
                 "I was facing massive hurdles in my career. Shastri ji's simple, practical astrological remedies brought stability back to my life."
               </p>
               <div className="flex items-center gap-3 mt-auto relative z-10">
-                <img src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=150&h=150&fit=crop&crop=faces&q=80" alt="Vikram S." className="w-8 h-8 rounded-full object-cover border border-zinc-700 blur-[1.5px]" />
+                <img loading="lazy" src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=150&h=150&fit=crop&crop=faces&q=80" alt="Vikram S." className="w-8 h-8 rounded-full object-cover border border-zinc-700 blur-[1.5px]" />
                 <p className="text-xs font-bold text-orange-400 tracking-wider">VIKRAM S., DELHI</p>
               </div>
               <div className="absolute -bottom-6 -right-2 text-zinc-800 text-9xl font-serif leading-none opacity-50 pointer-events-none">"</div>
@@ -417,7 +397,7 @@ export default function App() {
                 "A truly genuine guide. Unlike others, there were no false promises. Just patient listening and spiritual advice that actually worked."
               </p>
               <div className="flex items-center gap-3 mt-auto relative z-10">
-                <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&h=150&fit=crop&crop=faces&q=80" alt="Anjali K." className="w-8 h-8 rounded-full object-cover border border-zinc-700 blur-[1.5px]" />
+                <img loading="lazy" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&h=150&fit=crop&crop=faces&q=80" alt="Anjali K." className="w-8 h-8 rounded-full object-cover border border-zinc-700 blur-[1.5px]" />
                 <p className="text-xs font-bold text-orange-400 tracking-wider">ANJALI K., JAIPUR</p>
               </div>
               <div className="absolute -bottom-6 -right-2 text-zinc-800 text-9xl font-serif leading-none opacity-50 pointer-events-none">"</div>
@@ -438,7 +418,7 @@ export default function App() {
                 "We were on the verge of divorce, but the spiritual counseling provided here completely changed our perspective. We are now happily back together."
               </p>
               <div className="flex items-center gap-3 mt-auto relative z-10">
-                <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&crop=faces&q=80" alt="S. Gupta" className="w-8 h-8 rounded-full object-cover border border-zinc-700 blur-[1.5px]" />
+                <img loading="lazy" src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&crop=faces&q=80" alt="S. Gupta" className="w-8 h-8 rounded-full object-cover border border-zinc-700 blur-[1.5px]" />
                 <p className="text-xs font-bold text-orange-400 tracking-wider">S. GUPTA, PUNE</p>
               </div>
               <div className="absolute -bottom-6 -right-2 text-zinc-800 text-9xl font-serif leading-none opacity-50 pointer-events-none">"</div>
@@ -459,7 +439,7 @@ export default function App() {
                 "Mannu Shastri has a deep understanding of Vedic astrology. The remedies were simple to follow and highly effective for my family's peace."
               </p>
               <div className="flex items-center gap-3 mt-auto relative z-10">
-                <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&h=150&fit=crop&crop=faces&q=80" alt="Amit Chaudhary" className="w-8 h-8 rounded-full object-cover border border-zinc-700 blur-[1.5px]" />
+                <img loading="lazy" src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&h=150&fit=crop&crop=faces&q=80" alt="Amit Chaudhary" className="w-8 h-8 rounded-full object-cover border border-zinc-700 blur-[1.5px]" />
                 <p className="text-xs font-bold text-orange-400 tracking-wider">AMIT CHAUDHARY, NOIDA</p>
               </div>
               <div className="absolute -bottom-6 -right-2 text-zinc-800 text-9xl font-serif leading-none opacity-50 pointer-events-none">"</div>
@@ -473,7 +453,7 @@ export default function App() {
             transition={{ duration: 0.5, delay: 0.6, ease: "easeOut" }}
             className="md:col-span-2 bg-zinc-900 border border-zinc-800 rounded-3xl p-6 lg:p-8 flex flex-col sm:flex-row items-center justify-between gap-6"
           >
-            <div>
+            <div className="text-center sm:text-left">
               <h3 className="text-xl md:text-2xl font-serif font-bold text-white mb-2">
                 Your happiness deserves the right guidance.
               </h3>
@@ -501,7 +481,7 @@ export default function App() {
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true }}
         transition={{ duration: 0.6, ease: "easeOut" }}
-        className="bg-zinc-900/40 border border-zinc-800/80 rounded-3xl p-8 lg:p-12 shrink-0 relative overflow-hidden"
+        className="bg-zinc-900/40 border border-zinc-800/80 rounded-3xl p-6 sm:p-8 lg:p-12 shrink-0 relative overflow-hidden"
       >
         <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-b from-orange-950/20 to-transparent pointer-events-none"></div>
         
@@ -565,7 +545,7 @@ export default function App() {
               className="bg-zinc-900 border border-zinc-800 rounded-2xl p-4 flex flex-col group hover:border-orange-500/50 transition-all shadow-xl shadow-black/40"
             >
               <div className="relative aspect-video rounded-xl overflow-hidden mb-5 bg-zinc-800">
-                <img src={video.thumbnail} alt={video.title} className="w-full h-full object-cover opacity-60 group-hover:opacity-80 transition-opacity duration-500" />
+                <img loading="lazy" src={video.thumbnail} alt={video.title} className="w-full h-full object-cover opacity-60 group-hover:opacity-80 transition-opacity duration-500" />
                 <div className="absolute inset-0 bg-black/40 flex items-center justify-center group-hover:bg-black/20 transition-colors duration-500">
                   <div className="w-14 h-14 bg-orange-600 rounded-full flex items-center justify-center pl-1 shadow-[0_0_20px_rgba(234,88,12,0.6)] group-hover:scale-110 group-hover:bg-orange-500 group-hover:shadow-[0_0_30px_rgba(234,88,12,0.8)] transition-all duration-300">
                     <Play className="w-6 h-6 fill-white text-white" />
@@ -602,7 +582,7 @@ export default function App() {
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true }}
         transition={{ duration: 0.6, ease: "easeOut" }}
-        className="bg-zinc-900 border border-zinc-800 rounded-3xl p-8 lg:p-12 shrink-0 relative overflow-hidden"
+        className="bg-zinc-900 border border-zinc-800 rounded-3xl p-6 sm:p-8 lg:p-12 shrink-0 relative overflow-hidden"
       >
         <div className="text-center mb-10 relative z-10">
           <h3 className="text-sm font-semibold text-orange-500 uppercase tracking-widest flex items-center justify-center gap-2 mb-3">
@@ -615,62 +595,50 @@ export default function App() {
           </h2>
         </div>
 
-        <div className="flex flex-col md:flex-row justify-center items-center gap-8 md:gap-16 lg:gap-24 relative z-10 w-full max-w-5xl mx-auto">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-4 lg:gap-8 relative z-10 w-full max-w-5xl mx-auto">
           
           {/* Stat 1 */}
           <div className="flex flex-col items-center">
             <div className="w-12 h-12 bg-orange-500/10 rounded-full flex items-center justify-center mb-4 text-orange-400 border border-orange-500/20">
               <Users className="w-6 h-6" />
             </div>
-            <div className="text-4xl md:text-5xl font-bold text-white mb-2 font-serif tracking-tight flex">
+            <div className="text-3xl sm:text-4xl md:text-5xl font-bold text-white mb-2 font-serif tracking-tight flex">
               <Counter from={0} to={55000} duration={2} suffix="+" />
             </div>
-            <p className="text-sm text-zinc-400 font-medium tracking-wide uppercase">Clients Served</p>
+            <p className="text-xs sm:text-sm text-zinc-400 font-medium tracking-wide uppercase text-center w-full">Clients Served</p>
           </div>
-
-          {/* Spacer Line for Mobile / Divider for Desktop */}
-          <div className="hidden md:block w-px h-24 bg-zinc-800"></div>
-          <div className="block md:hidden w-32 h-px bg-zinc-800"></div>
 
           {/* Stat 2 */}
           <div className="flex flex-col items-center">
             <div className="w-12 h-12 bg-orange-500/10 rounded-full flex items-center justify-center mb-4 text-orange-400 border border-orange-500/20">
               <Award className="w-6 h-6" />
             </div>
-            <div className="text-4xl md:text-5xl font-bold text-white mb-2 font-serif tracking-tight flex">
+            <div className="text-3xl sm:text-4xl md:text-5xl font-bold text-white mb-2 font-serif tracking-tight flex">
               <Counter from={0} to={35} duration={1.5} suffix="+" />
             </div>
-            <p className="text-sm text-zinc-400 font-medium tracking-wide uppercase">Years of Exp.</p>
+            <p className="text-xs sm:text-sm text-zinc-400 font-medium tracking-wide uppercase text-center w-full">Years of Exp.</p>
           </div>
-
-          {/* Spacer Line for Mobile / Divider for Desktop */}
-          <div className="hidden md:block w-px h-24 bg-zinc-800"></div>
-          <div className="block md:hidden w-32 h-px bg-zinc-800"></div>
 
           {/* Stat 3 */}
           <div className="flex flex-col items-center">
             <div className="w-12 h-12 bg-orange-500/10 rounded-full flex items-center justify-center mb-4 text-orange-400 border border-orange-500/20">
               <Smile className="w-6 h-6" />
             </div>
-            <div className="text-4xl md:text-5xl font-bold text-white mb-2 font-serif tracking-tight flex">
+            <div className="text-3xl sm:text-4xl md:text-5xl font-bold text-white mb-2 font-serif tracking-tight flex">
               <Counter from={0} to={98} duration={2} suffix="%" />
             </div>
-            <p className="text-sm text-zinc-400 font-medium tracking-wide uppercase">Satisfaction</p>
+            <p className="text-xs sm:text-sm text-zinc-400 font-medium tracking-wide uppercase text-center w-full">Satisfaction</p>
           </div>
-
-          {/* Spacer Line for Mobile / Divider for Desktop */}
-          <div className="hidden lg:block w-px h-24 bg-zinc-800"></div>
-          <div className="block lg:hidden w-32 h-px bg-zinc-800"></div>
 
           {/* Stat 4 */}
           <div className="flex flex-col items-center">
             <div className="w-12 h-12 bg-orange-500/10 rounded-full flex items-center justify-center mb-4 text-orange-400 border border-orange-500/20">
               <Clock className="w-6 h-6" />
             </div>
-            <div className="text-4xl md:text-5xl font-bold text-white mb-2 font-serif tracking-tight flex">
+            <div className="text-3xl sm:text-4xl md:text-5xl font-bold text-white mb-2 font-serif tracking-tight flex">
               24<span className="text-orange-500">/</span>7
             </div>
-            <p className="text-sm text-zinc-400 font-medium tracking-wide uppercase">Support</p>
+            <p className="text-xs sm:text-sm text-zinc-400 font-medium tracking-wide uppercase text-center w-full">Support</p>
           </div>
 
         </div>
@@ -682,7 +650,7 @@ export default function App() {
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true }}
         transition={{ duration: 0.6, ease: "easeOut" }}
-        className="bg-zinc-900/30 border border-zinc-800 rounded-3xl p-8 lg:p-12 shrink-0 relative overflow-hidden"
+        className="bg-zinc-900/30 border border-zinc-800 rounded-3xl p-6 sm:p-8 lg:p-12 shrink-0 relative overflow-hidden"
       >
         <div className="absolute top-0 right-0 w-full h-full bg-gradient-to-t from-orange-950/10 to-transparent pointer-events-none"></div>
 
@@ -729,7 +697,7 @@ export default function App() {
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true }}
         transition={{ duration: 0.6, ease: "easeOut" }}
-        className="bg-zinc-900/30 border border-zinc-800 rounded-3xl p-8 lg:p-12 shrink-0 relative overflow-hidden flex flex-col md:flex-row items-center justify-between gap-8 mt-2"
+        className="bg-zinc-900/30 border border-zinc-800 rounded-3xl p-6 sm:p-8 lg:p-12 shrink-0 relative overflow-hidden flex flex-col md:flex-row items-center justify-between gap-8 mt-2"
       >
         <div className="absolute top-0 right-0 w-64 h-64 bg-orange-600/5 rounded-full blur-3xl pointer-events-none"></div>
 
@@ -747,7 +715,7 @@ export default function App() {
           <div className="flex items-center justify-center md:justify-start gap-4 mt-6">
             <div className="w-14 h-14 bg-gradient-to-tr from-yellow-400 via-red-500 to-purple-500 rounded-full flex items-center justify-center p-[2px] shadow-lg shadow-pink-500/10 shrink-0">
               <div className="w-full h-full bg-zinc-900 rounded-full flex items-center justify-center border-[3px] border-zinc-900 overflow-hidden">
-                <img src="https://i.ibb.co/TBCRvsGx/PHOTO-2026-03-18-11-58-44.jpg" alt="Instagram Profile" className="w-full h-full object-cover" />
+                <img loading="lazy" src="https://i.ibb.co/TBCRvsGx/PHOTO-2026-03-18-11-58-44.jpg" alt="Instagram Profile" className="w-full h-full object-cover" />
               </div>
             </div>
             <div className="text-left">
@@ -784,7 +752,7 @@ export default function App() {
       </motion.section>
 
       {/* Footer */}
-      <footer className="flex flex-col sm:flex-row justify-between items-center py-4 border-t border-zinc-900 px-2 mt-2 gap-4 shrink-0 relative z-10">
+      <footer id="contact" className="flex flex-col sm:flex-row justify-between items-center py-4 border-t border-zinc-900 px-2 mt-2 gap-4 shrink-0 relative z-10">
         <p className="text-[10px] text-zinc-500 uppercase tracking-widest text-center sm:text-left">
           Vedic Wisdom & Spiritual Support • Sikar, Rajasthan
         </p>
@@ -803,7 +771,7 @@ export default function App() {
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
           href="tel:+919928433259"
-          className="bg-orange-600 text-white p-4 rounded-full shadow-2xl shadow-orange-600/40 flex items-center justify-center group relative cursor-pointer"
+          className="bg-orange-600 text-white p-4 rounded-full shadow-2xl shadow-orange-600/40 hidden md:flex items-center justify-center group relative cursor-pointer"
         >
           <span className="absolute -top-14 right-0 md:-left-36 md:-top-0 md:bottom-2 md:right-auto bg-zinc-900 border border-zinc-700 text-xs font-bold px-4 py-2 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap text-zinc-200 pointer-events-none shadow-xl transform md:-translate-x-2 flex items-center gap-2">
             Talk to Expert
@@ -822,7 +790,7 @@ export default function App() {
           href="https://wa.me/919928433259?text=Hello%20I%20need%20help%20with%20my%20relationship"
           target="_blank"
           rel="noopener noreferrer"
-          className="bg-[#25D366] text-white p-3.5 sm:p-4 rounded-full shadow-2xl shadow-[#25D366]/40 flex items-center justify-center group relative cursor-pointer"
+          className="bg-[#25D366] text-white p-3.5 sm:p-4 rounded-full shadow-2xl shadow-[#25D366]/40 flex items-center justify-center group relative cursor-pointer hidden md:flex"
         >
           <span className="absolute -top-14 right-0 md:-left-36 md:-top-0 md:bottom-2 md:right-auto bg-zinc-900 border border-zinc-700 text-xs font-bold px-4 py-2 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap text-zinc-200 pointer-events-none shadow-xl transform md:-translate-x-2 flex items-center gap-2">
             <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
@@ -834,6 +802,33 @@ export default function App() {
           <span className="absolute w-full h-full rounded-full bg-[#25D366] opacity-40 animate-ping" style={{ animationDuration: '3s' }}></span>
         </motion.a>
       </div>
+
+      {/* Floating Horoscope Widget */}
+      <div className="fixed bottom-24 left-4 md:bottom-8 md:left-8 z-50 flex flex-col gap-4 items-start">
+        <motion.a
+          initial={{ scale: 0, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          transition={{ delay: 1.6, type: "spring", stiffness: 200, damping: 20 }}
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+          href="/horoscope"
+          className="bg-zinc-950 border border-orange-500/50 text-white p-2 sm:p-2.5 pr-4 sm:pr-5 rounded-full shadow-2xl shadow-orange-600/20 flex items-center justify-center flex-row gap-2.5 group relative cursor-pointer"
+        >
+          <div className="bg-orange-500/10 p-2 sm:p-2.5 rounded-full relative">
+            <span className="absolute -inset-[3px] rounded-full border border-orange-500/30 animate-[spin_4s_linear_infinite]"></span>
+            <MoonStar className="w-5 h-5 sm:w-6 sm:h-6 text-orange-500 relative z-10" />
+          </div>
+          <span className="font-bold text-xs sm:text-sm text-orange-400 whitespace-nowrap tracking-wide leading-none">
+            Free Horoscope<br/>
+            <span className="text-[9px] sm:text-[10px] text-zinc-400 font-normal uppercase tracking-widest mt-0.5 block">By Mannu Shastri</span>
+          </span>
+          <span className="absolute -right-1.5 -top-1.5 flex h-3.5 w-3.5">
+             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-orange-400 opacity-75"></span>
+             <span className="relative inline-flex rounded-full h-3.5 w-3.5 bg-orange-500 border-2 border-zinc-950"></span>
+          </span>
+        </motion.a>
+      </div>
+      </main>
     </div>
   );
 }

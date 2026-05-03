@@ -1,22 +1,22 @@
 import { useState, useRef, useEffect, useMemo } from 'react';
 import { Search } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 const searchData = [
-  { title: "Lost Love Back Specialist", path: "/services", keywords: ["ex", "return", "lover", "breakup"] },
-  { title: "Love Problem Solution", path: "/services", keywords: ["relationship", "issues", "fights", "misunderstanding"] },
-  { title: "Breakup Solution", path: "/services", keywords: ["patch up", "heartbreak", "separation"] },
-  { title: "Husband/Wife Problem Solution", path: "/services", keywords: ["marriage", "divorce", "spouse", "fights"] },
-  { title: "Marriage Problem Solution", path: "/services", keywords: ["delay", "obstacles", "kundli", "astrology"] },
-  { title: "About Astrologer Mannu Shastri", path: "/", keywords: ["experience", "biography", "expert"] },
-  { title: "Real Client Testimonials", path: "/services", keywords: ["reviews", "feedback", "success stories"] },
-  { title: "Contact on WhatsApp", path: "/", keywords: ["chat", "message", "help", "consultation"] }
+  { title: "Free Vedic Horoscope", path: "/horoscope", keywords: ["horoscope", "kundli", "reading", "astrology", "future"] },
+  { title: "Love Problem Solution in Jaipur", path: "/love-problem-solution-jaipur", keywords: ["jaipur", "love problem", "relationship", "issues", "fights", "misunderstanding"] },
+  { title: "Love Problem Solution in Mumbai", path: "/love-problem-solution-mumbai", keywords: ["mumbai", "love problem", "relationship", "issues", "fights", "misunderstanding"] },
+  { title: "Lost Love Back Specialist", path: "/lost-love-back-india", keywords: ["lost love", "ex", "return", "lover", "breakup"] },
+  { title: "Our Services", path: "/services", keywords: ["services", "love problem", "breakup solution", "husband/wife", "marriage problem"] },
+  { title: "About Astrologer Mannu Shastri", path: "/about", keywords: ["about", "experience", "biography", "expert"] },
+  { title: "Contact on WhatsApp", path: "/contact", keywords: ["contact", "chat", "message", "help", "consultation"] }
 ];
 
 export default function SearchBar() {
   const [query, setQuery] = useState("");
   const [isOpen, setIsOpen] = useState(false);
   const wrapperRef = useRef<HTMLDivElement>(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
@@ -39,35 +39,53 @@ export default function SearchBar() {
     );
   }, [query]);
 
+  const handleSearch = (e?: React.FormEvent) => {
+    if (e) e.preventDefault();
+    if (query.trim() !== "" && filteredData.length > 0) {
+      navigate(filteredData[0].path);
+      setIsOpen(false);
+      setQuery("");
+    }
+  };
+
   // Helper to highlight matching text
   const highlightMatch = (text: string, highlight: string) => {
     if (!highlight.trim()) return text;
     const regex = new RegExp(`(${highlight})`, 'gi');
     const parts = text.split(regex);
     return parts.map((part, i) => 
-      regex.test(part) ? <span key={i} className="text-amber-500 font-bold bg-amber-500/10 rounded px-0.5">{part}</span> : part
+      regex.test(part) ? <span key={i} className="text-orange-500 font-bold bg-orange-500/10 rounded px-0.5">{part}</span> : part
     );
   };
 
   return (
-    <div className="relative" ref={wrapperRef}>
-      <div className="flex items-center bg-zinc-800/50 border border-zinc-700/50 rounded-full px-3 py-1.5 focus-within:border-orange-500/50 transition-colors">
-        <Search className="w-4 h-4 text-zinc-400 mr-2 shrink-0" />
+    <div className="relative w-full sm:w-auto" ref={wrapperRef}>
+      <form 
+        onSubmit={handleSearch}
+        className="flex items-center bg-zinc-800/50 border border-zinc-700/50 rounded-full px-3 py-1 focus-within:border-orange-500/50 transition-colors"
+      >
         <input 
           type="text" 
-          placeholder="Search services..." 
+          placeholder="Search..." 
           value={query}
           onChange={(e) => {
             setQuery(e.target.value);
             setIsOpen(true);
           }}
           onFocus={() => setIsOpen(true)}
-          className="bg-transparent border-none outline-none text-sm text-zinc-200 placeholder:text-zinc-500 w-32 sm:w-48 transition-all"
+          className="bg-transparent border-none outline-none text-sm text-zinc-200 placeholder:text-zinc-500 w-full sm:w-32 md:w-48 transition-all py-1.5 px-1"
         />
-      </div>
+        <button 
+          type="submit" 
+          className="p-1.5 hover:bg-zinc-700/50 rounded-full transition-colors shrink-0" 
+          onClick={handleSearch}
+        >
+          <Search className="w-4 h-4 text-orange-500" />
+        </button>
+      </form>
 
       {isOpen && query.length > 0 && (
-        <div className="absolute top-full mt-2 w-full min-w-[240px] right-0 bg-zinc-900 border border-zinc-700 rounded-xl shadow-2xl overflow-hidden z-50">
+        <div className="absolute top-full mt-2 w-full min-w-[280px] sm:right-0 bg-zinc-900 border border-zinc-700 rounded-xl shadow-2xl overflow-hidden z-50">
           {filteredData.length > 0 ? (
             <ul className="max-h-64 overflow-y-auto py-2">
               {filteredData.map((item, index) => (
@@ -95,8 +113,8 @@ export default function SearchBar() {
               ))}
             </ul>
           ) : (
-            <div className="px-4 py-3 text-sm text-zinc-500 text-center">
-              No results found
+            <div className="px-4 py-4 text-sm text-zinc-400 text-center">
+              No results found. Please try another keyword.
             </div>
           )}
         </div>

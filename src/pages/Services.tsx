@@ -2,10 +2,10 @@ import { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence, useInView, animate } from 'motion/react';
 import { Phone, CheckCircle, ChevronDown, MessageCircle, Star, HeartCrack, Flame, Users } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import SearchBar from '../components/SearchBar';
+import Header from '../components/Header';
 import SEO from '../components/SEO';
 
-function FaqItem({ question, answer, isOpen, onClick }: { question: string, answer: string, isOpen: boolean, onClick: () => void }) {
+function FaqItem({ question, answer, isOpen, onClick }: { question: string, answer: string, isOpen: boolean, onClick: () => void, key?: string | number }) {
   return (
     <div className="border-b border-zinc-800/60 last:border-0 relative z-10">
       <button 
@@ -121,31 +121,11 @@ export default function Services() {
         url="https://ais-pre-yiujbuguleggsehuv2syxt-446001962622.asia-east1.run.app/services"
         structuredData={structuredData}
       />
-      {/* Navigation Header */}
-      <header className="border-b border-zinc-800/80 bg-zinc-950/80 backdrop-blur-md sticky top-0 z-50">
-        <div className="max-w-[1440px] mx-auto px-6 py-4 flex items-center justify-between">
-          <Link to="/" className="flex items-center gap-3 group">
-            <img src="https://i.ibb.co/TBCRvsGx/PHOTO-2026-03-18-11-58-44.jpg" alt="Astrologer Mannu Shastri" className="w-10 h-10 rounded-full object-cover border border-amber-600/50" />
-            <div>
-              <h1 className="text-lg font-bold tracking-tight text-zinc-100 group-hover:text-amber-500 transition-colors">Astrologer Mannu Shastri Ji</h1>
-            </div>
-          </Link>
-          <div className="flex gap-6 lg:gap-8 items-center">
-            <div className="hidden sm:block">
-              <SearchBar />
-            </div>
-            <div className="hidden sm:flex gap-6 items-center">
-              <Link to="/" className="text-sm font-medium hover:text-amber-400 transition-colors">Home</Link>
-              <span className="text-amber-500 font-medium text-sm border-b border-amber-500 pb-0.5">Services</span>
-            </div>
-          </div>
-        </div>
-      </header>
-
-      <main className="max-w-[1440px] mx-auto px-4 sm:px-6 flex flex-col gap-12 py-10">
+      <Header activePage="services" />
+      <main className="max-w-[1440px] mx-auto px-4 sm:px-6 flex flex-col gap-12 py-10 pb-24 md:pb-10">
         
         {/* HERO SECTION */}
-        <section className="relative overflow-hidden rounded-[2rem] bg-gradient-to-b from-zinc-900 to-black border border-zinc-800 text-center py-16 px-6 md:py-24">
+        <section className="relative overflow-hidden rounded-[2rem] bg-gradient-to-b from-zinc-900 to-black border border-zinc-800 text-center py-12 px-6 sm:py-16 md:py-24">
           <div className="absolute top-0 left-1/2 -translate-x-1/2 w-96 h-96 bg-amber-500/10 rounded-full blur-[100px] pointer-events-none"></div>
           
           <span className="inline-block px-4 py-1.5 rounded-full bg-amber-500/10 border border-amber-500/20 text-amber-500 text-xs font-bold tracking-widest uppercase mb-6">
@@ -199,7 +179,7 @@ export default function Services() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.5, delay: i * 0.1 }}
-              className="bg-zinc-900 border border-zinc-800 rounded-3xl p-8 flex flex-col justify-between hover:border-amber-600/40 transition-colors group relative overflow-hidden"
+              className="bg-zinc-900 border border-zinc-800 rounded-3xl p-6 md:p-8 flex flex-col justify-between hover:border-amber-600/40 transition-colors group relative overflow-hidden"
             >
               <div 
                 className="absolute inset-0 bg-cover bg-center opacity-10 group-hover:opacity-25 transition-opacity duration-500" 
@@ -235,21 +215,21 @@ export default function Services() {
         </section>
 
         {/* WHY CHOOSE US */}
-        <section className="bg-zinc-900/40 border border-zinc-800 rounded-[2rem] p-8 md:p-14 lg:flex gap-12 items-center">
-          <div className="lg:w-1/2 mb-10 lg:mb-0">
+        <section className="bg-zinc-900/40 border border-zinc-800 rounded-[2rem] p-6 sm:p-8 md:p-14 flex flex-col lg:flex-row gap-8 lg:gap-12 items-center">
+          <div className="w-full lg:w-1/2 mb-4 lg:mb-0 text-center lg:text-left">
             <h2 className="text-3xl md:text-4xl font-serif text-white mb-6">
               Why <span className="text-amber-500">55,000+</span> Clients Trust Us?
             </h2>
             <p className="text-zinc-400 leading-relaxed mb-8">
               Trust is earned through consistent results. Our deep understanding of Vedic astrology combined with genuine care for our clients' well-being makes us the leading choice for relationship solutions. We believe in transparency, honesty, and providing practical remedies that actually bring change.
             </p>
-            <div className="flex gap-4">
-              <a href="tel:+919928433259" className="bg-amber-600 text-white px-6 py-3 rounded-xl font-bold flex items-center gap-2 hover:bg-amber-500 shadow-lg shadow-amber-600/20">
+            <div className="flex justify-center lg:justify-start gap-4">
+              <a href="tel:+919928433259" className="w-full sm:w-auto justify-center bg-amber-600 text-white px-6 py-3 rounded-xl font-bold flex items-center gap-2 hover:bg-amber-500 shadow-lg shadow-amber-600/20">
                 <Phone className="w-5 h-5" /> Get Trusted Help
               </a>
             </div>
           </div>
-          <div className="lg:w-1/2 grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div className="w-full lg:w-1/2 grid grid-cols-1 sm:grid-cols-2 gap-4">
             {[
               "Years of experience in astrology",
               "Accurate and practical solutions",
@@ -291,7 +271,7 @@ export default function Services() {
         </section>
 
         {/* TESTIMONIALS */}
-        <section className="bg-zinc-900/60 border border-zinc-800 rounded-[2rem] p-8 md:p-14">
+        <section className="bg-zinc-900/60 border border-zinc-800 rounded-[2rem] p-6 sm:p-8 md:p-14">
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-serif text-white mb-4">Real Words. <span className="text-amber-500">Real Results.</span></h2>
           </div>
@@ -307,7 +287,7 @@ export default function Services() {
                 </div>
                 <p className="text-zinc-300 italic text-sm mb-6 leading-relaxed">"{testi.text}"</p>
                 <div className="mt-auto flex items-center gap-3">
-                  <img src={testi.image} alt={testi.author} className="w-8 h-8 rounded-full object-cover border border-amber-500/30 blur-[1.5px]" />
+                  <img loading="lazy" src={testi.image} alt={testi.author} className="w-8 h-8 rounded-full object-cover border border-amber-500/30 blur-[1.5px]" />
                   <p className="text-xs uppercase tracking-widest text-amber-500 font-bold">{testi.author}</p>
                 </div>
               </div>
@@ -334,17 +314,17 @@ export default function Services() {
         </section>
 
         {/* FINAL CTA */}
-        <section className="bg-gradient-to-r from-amber-600 to-orange-500 rounded-[2rem] p-10 md:p-16 text-center text-white relative overflow-hidden">
+        <section className="bg-gradient-to-r from-amber-600 to-orange-500 rounded-[2rem] p-8 sm:p-10 md:p-16 text-center text-white relative overflow-hidden">
           <div className="relative z-10">
             <h2 className="text-3xl md:text-5xl font-serif font-bold mb-6">Get Your Solution Now</h2>
             <p className="text-white/90 text-lg mb-10 max-w-2xl mx-auto">
               Don't let your problem grow bigger. Take action now and get instant help to restore the peace and love you deserve.
             </p>
             <div className="flex flex-col sm:flex-row justify-center gap-4">
-              <a href="https://wa.me/919928433259?text=Hello%20I%20need%20solution%20for%20my%20problem" target="_blank" rel="noopener noreferrer" className="bg-white text-orange-600 hover:bg-zinc-100 font-bold py-4 px-8 rounded-xl flex items-center justify-center gap-3 transition-colors shadow-xl">
+              <a href="https://wa.me/919928433259?text=Hello%20I%20need%20solution%20for%20my%20problem" target="_blank" rel="noopener noreferrer" className="w-full sm:w-auto bg-white text-orange-600 hover:bg-zinc-100 font-bold py-4 px-8 rounded-xl flex items-center justify-center gap-3 transition-colors shadow-xl">
                 <MessageCircle className="w-5 h-5 text-[#25D366]" /> Chat on WhatsApp
               </a>
-              <a href="tel:+919928433259" className="bg-black/20 hover:bg-black/30 border border-white/30 text-white font-bold py-4 px-8 rounded-xl flex items-center justify-center gap-3 transition-colors">
+              <a href="tel:+919928433259" className="w-full sm:w-auto bg-black/20 hover:bg-black/30 border border-white/30 text-white font-bold py-4 px-8 rounded-xl flex items-center justify-center gap-3 transition-colors">
                 <Phone className="w-5 h-5" /> Call Directly
               </a>
             </div>
@@ -354,7 +334,7 @@ export default function Services() {
       </main>
 
       {/* FOOTER */}
-      <footer className="border-t border-zinc-900 bg-black mt-10">
+      <footer id="contact" className="border-t border-zinc-900 bg-black mt-10 pb-20 md:pb-0">
         <div className="max-w-[1440px] mx-auto px-6 py-8 flex flex-col md:flex-row justify-between items-center gap-6">
           <div className="text-center md:text-left">
             <h4 className="text-lg font-bold text-white mb-2">Astrologer Mannu Shastri Ji</h4>

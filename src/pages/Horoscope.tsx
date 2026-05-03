@@ -1,10 +1,11 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useCallback } from 'react';
 import { motion } from 'motion/react';
 import { Star, Clock, MapPin, Calendar, User, Sparkles, Loader2, ArrowRight, Languages } from 'lucide-react';
 import { GoogleGenAI } from "@google/genai";
 import ReactMarkdown from 'react-markdown';
 import Header from '../components/Header';
 import SEO from '../components/SEO';
+import { ErrorBoundary } from '../components/ErrorBoundary';
 
 interface PanchangData {
   tithi: string;
@@ -14,6 +15,10 @@ interface PanchangData {
   rashi: string;
   rashiInsight: string;
 }
+
+const ThrowAsyncError = ({ error }: { error: Error }) => {
+  throw error;
+};
 
 export default function Horoscope() {
   const [formData, setFormData] = useState({
@@ -27,9 +32,12 @@ export default function Horoscope() {
   
   const [loading, setLoading] = useState(false);
   const [reading, setReading] = useState<string | null>(null);
-  const [error, setError] = useState<string | null>(null);
+  const [formError, setFormError] = useState<string | null>(null);
   const [panchang, setPanchang] = useState<PanchangData | null>(null);
   const [loadingPanchang, setLoadingPanchang] = useState(false);
+  
+  const [panchangError, setPanchangError] = useState<Error | null>(null);
+  const [readingError, setReadingError] = useState<Error | null>(null);
   
   const resultRef = useRef<HTMLDivElement>(null);
 
@@ -39,13 +47,15 @@ export default function Horoscope() {
     }
   }, [reading]);
 
-  useEffect(() => {
-    const fetchPanchang = async () => {
-      setLoadingPanchang(true);
-      try {
-        if (!process.env.GEMINI_API_KEY) return;
-        const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
-        const prompt = `Provide today's Vedic Panchang and Moon's current Rashi for ${new Date().toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata', weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}. 
+  const fetchPanchang = useCallback(async () => {
+    setLoadingPanchang(true);
+    setPanchangError(null);
+    try {
+      if (!process.env.GEMINI_API_KEY) {
+        throw new Error("API configuration missing.");
+      }
+      const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
+      const prompt = `Provide today's Vedic Panchang and Moon's current Rashi for ${new Date().toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata', weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}. 
 Return the response ONLY as a valid JSON object with the following structure:
 {
   "tithi": "...",
@@ -56,30 +66,32 @@ Return the response ONLY as a valid JSON object with the following structure:
   "rashiInsight": "1-sentence general insight for the Moon's current Rashi"
 }
 Do not include any markdown formatting like \`\`\`json or \`\`\`. Just output the raw JSON object.`;
-        
-        const response = await ai.models.generateContent({
-          model: "gemini-3-flash-preview",
-          contents: prompt,
-        });
+      
+      const response = await ai.models.generateContent({
+        model: "gemini-3-flash-preview",
+        contents: prompt,
+      });
 
-        if (response.text) {
-          try {
-            const cleanJson = response.text.replace(/```json/g, '').replace(/```/g, '').trim();
-            const parsedData = JSON.parse(cleanJson);
-            setPanchang(parsedData);
-          } catch (e) {
-            console.error("Failed to parse Panchang JSON:", e);
-          }
+      if (response.text) {
+        try {
+          const cleanJson = response.text.replace(/```json/g, '').replace(/```/g, '').trim();
+          const parsedData = JSON.parse(cleanJson);
+          setPanchang(parsedData);
+        } catch (e) {
+          throw new Error("Failed to parse celestial data. Please try again.");
         }
-      } catch (err) {
-        console.error("Panchang generation error:", err);
-      } finally {
-        setLoadingPanchang(false);
       }
-    };
-    
-    fetchPanchang();
+    } catch (err: any) {
+      console.error("Panchang generation error:", err);
+      setPanchangError(err instanceof Error ? err : new Error(String(err)));
+    } finally {
+      setLoadingPanchang(false);
+    }
   }, []);
+
+  useEffect(() => {
+    fetchPanchang();
+  }, [fetchPanchang]);
 
   const structuredData = {
     "@context": "https://schema.org",
@@ -98,12 +110,13 @@ Do not include any markdown formatting like \`\`\`json or \`\`\`. Just output th
     e.preventDefault();
     
     if (!formData.name || !formData.dob || !formData.place) {
-      setError("Please fill in at least your name, date of birth, and place of birth.");
+      setFormError("Please fill in at least your name, date of birth, and place of birth.");
       return;
     }
     
     setLoading(true);
-    setError(null);
+    setFormError(null);
+    setReadingError(null);
     setReading(null);
 
     try {
@@ -146,11 +159,11 @@ Maintain a warm, reassuring, and professional tone. Make them feel understood. U
       if (response.text) {
         setReading(response.text);
       } else {
-        throw new Error("Failed to generate reading. Please try again.");
+        throw new Error("Failed to generate reading due to cosmic interference. Please try again.");
       }
     } catch (err: any) {
       console.error("Horoscope generation error:", err);
-      setError(err.message || "An error occurred while generating your horoscope. Please try again later.");
+      setReadingError(err instanceof Error ? err : new Error(String(err)));
     } finally {
       setLoading(false);
     }
@@ -301,9 +314,9 @@ Maintain a warm, reassuring, and professional tone. Make them feel understood. U
                 </select>
               </div>
 
-              {error && (
+              {formError && (
                 <div className="bg-red-500/10 border border-red-500/20 text-red-400 text-sm p-3 rounded-lg">
-                  {error}
+                  {formError}
                 </div>
               )}
 
@@ -329,8 +342,10 @@ Maintain a warm, reassuring, and professional tone. Make them feel understood. U
 
           {/* Result Area */}
           <div className="lg:col-span-7 flex flex-col h-full min-h-[500px]" ref={resultRef}>
-            
-            {!reading && !loading && (
+            <ErrorBoundary onRetry={() => setReadingError(null)}>
+              {readingError && <ThrowAsyncError error={readingError} />}
+              
+              {!reading && !loading && (
               <div className="flex-1 border border-zinc-800 border-dashed rounded-3xl flex flex-col items-center justify-center p-8 sm:p-12 text-center bg-zinc-900/20 h-full">
                 <div className="w-16 h-16 sm:w-20 sm:h-20 bg-zinc-900 rounded-full flex items-center justify-center mb-6">
                   <Star className="w-8 h-8 sm:w-10 sm:h-10 text-zinc-700" />
@@ -341,48 +356,51 @@ Maintain a warm, reassuring, and professional tone. Make them feel understood. U
                 </p>
 
                 {/* Daily Panchang Widget */}
-                <div className="w-full max-w-md bg-black/40 border border-orange-500/10 rounded-2xl p-6 text-left shadow-lg">
-                  <h4 className="text-lg font-serif text-orange-400 mb-4 flex items-center gap-2 border-b border-orange-500/10 pb-3">
-                    <Calendar className="w-5 h-5" /> Today's Panchang & Rashi
-                  </h4>
-                  {loadingPanchang ? (
-                    <div className="flex items-center gap-3 text-zinc-500 text-sm py-4">
-                      <Loader2 className="w-4 h-4 animate-spin" /> Fetching today's planetary positions...
-                    </div>
-                  ) : panchang ? (
-                    <div className="flex flex-col gap-4 mt-2">
-                      <div className="grid grid-cols-2 gap-3">
-                        <div className="bg-zinc-900/50 rounded-lg p-3 border border-zinc-800">
-                          <span className="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Tithi</span>
-                          <span className="text-sm font-medium text-zinc-200">{panchang.tithi}</span>
+                <div className="w-full max-w-md bg-black/40 border border-orange-500/10 rounded-2xl p-6 text-left shadow-lg relative min-h-[150px]">
+                  <ErrorBoundary onRetry={fetchPanchang}>
+                    {panchangError && <ThrowAsyncError error={panchangError} />}
+                    <h4 className="text-lg font-serif text-orange-400 mb-4 flex items-center gap-2 border-b border-orange-500/10 pb-3">
+                      <Calendar className="w-5 h-5" /> Today's Panchang & Rashi
+                    </h4>
+                    {loadingPanchang ? (
+                      <div className="flex items-center gap-3 text-zinc-500 text-sm py-4">
+                        <Loader2 className="w-4 h-4 animate-spin" /> Fetching today's planetary positions...
+                      </div>
+                    ) : panchang ? (
+                      <div className="flex flex-col gap-4 mt-2">
+                        <div className="grid grid-cols-2 gap-3">
+                          <div className="bg-zinc-900/50 rounded-lg p-3 border border-zinc-800">
+                            <span className="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Tithi</span>
+                            <span className="text-sm font-medium text-zinc-200">{panchang.tithi}</span>
+                          </div>
+                          <div className="bg-zinc-900/50 rounded-lg p-3 border border-zinc-800">
+                            <span className="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Nakshatra</span>
+                            <span className="text-sm font-medium text-zinc-200">{panchang.nakshatra}</span>
+                          </div>
+                          <div className="bg-zinc-900/50 rounded-lg p-3 border border-zinc-800">
+                            <span className="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Yoga</span>
+                            <span className="text-sm font-medium text-zinc-200">{panchang.yoga}</span>
+                          </div>
+                          <div className="bg-zinc-900/50 rounded-lg p-3 border border-zinc-800">
+                            <span className="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Karana</span>
+                            <span className="text-sm font-medium text-zinc-200">{panchang.karana}</span>
+                          </div>
                         </div>
-                        <div className="bg-zinc-900/50 rounded-lg p-3 border border-zinc-800">
-                          <span className="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Nakshatra</span>
-                          <span className="text-sm font-medium text-zinc-200">{panchang.nakshatra}</span>
-                        </div>
-                        <div className="bg-zinc-900/50 rounded-lg p-3 border border-zinc-800">
-                          <span className="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Yoga</span>
-                          <span className="text-sm font-medium text-zinc-200">{panchang.yoga}</span>
-                        </div>
-                        <div className="bg-zinc-900/50 rounded-lg p-3 border border-zinc-800">
-                          <span className="block text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Karana</span>
-                          <span className="text-sm font-medium text-zinc-200">{panchang.karana}</span>
+                        
+                        <div className="bg-orange-500/5 rounded-xl p-4 border border-orange-500/20 mt-2">
+                          <div className="flex items-center gap-2 mb-2">
+                            <Star className="w-4 h-4 text-orange-400" />
+                            <span className="font-serif text-lg text-orange-300">Moon in {panchang.rashi}</span>
+                          </div>
+                          <p className="text-base text-zinc-300 leading-relaxed">
+                            {panchang.rashiInsight}
+                          </p>
                         </div>
                       </div>
-                      
-                      <div className="bg-orange-500/5 rounded-xl p-4 border border-orange-500/20 mt-2">
-                        <div className="flex items-center gap-2 mb-2">
-                          <Star className="w-4 h-4 text-orange-400" />
-                          <span className="font-serif text-lg text-orange-300">Moon in {panchang.rashi}</span>
-                        </div>
-                        <p className="text-base text-zinc-300 leading-relaxed">
-                          {panchang.rashiInsight}
-                        </p>
-                      </div>
-                    </div>
-                  ) : (
-                    <p className="text-sm text-zinc-500">Panchang data currently unavailable.</p>
-                  )}
+                    ) : (
+                      <p className="text-sm text-zinc-500">Panchang data currently unavailable.</p>
+                    )}
+                  </ErrorBoundary>
                 </div>
               </div>
             )}
@@ -454,6 +472,7 @@ Maintain a warm, reassuring, and professional tone. Make them feel understood. U
               </motion.div>
             )}
 
+            </ErrorBoundary>
           </div>
         </div>
       </main>

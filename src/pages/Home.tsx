@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence, useInView, animate } from 'motion/react';
+import { Link, useNavigate } from 'react-router-dom';
 import SEO from '../components/SEO';
 import Header from '../components/Header';
 import { 
@@ -114,7 +115,7 @@ function FaqItem({ question, answer, isOpen, onClick }: { question: string, answ
   );
 }
 
-export default function App() {
+export default function Home() {
   const [openFaqIndex, setOpenFaqIndex] = useState<number | null>(0);
   
   const structuredData = {
@@ -805,28 +806,29 @@ export default function App() {
 
       {/* Floating Horoscope Widget */}
       <div className="fixed bottom-24 left-4 md:bottom-8 md:left-8 z-50 flex flex-col gap-4 items-start">
-        <motion.a
-          initial={{ scale: 0, opacity: 0 }}
-          animate={{ scale: 1, opacity: 1 }}
-          transition={{ delay: 1.6, type: "spring", stiffness: 200, damping: 20 }}
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
-          href="/horoscope"
-          className="bg-zinc-950 border border-orange-500/50 text-white p-2 sm:p-2.5 pr-4 sm:pr-5 rounded-full shadow-2xl shadow-orange-600/20 flex items-center justify-center flex-row gap-2.5 group relative cursor-pointer"
-        >
-          <div className="bg-orange-500/10 p-2 sm:p-2.5 rounded-full relative">
-            <span className="absolute -inset-[3px] rounded-full border border-orange-500/30 animate-[spin_4s_linear_infinite]"></span>
-            <MoonStar className="w-5 h-5 sm:w-6 sm:h-6 text-orange-500 relative z-10" />
-          </div>
-          <span className="font-bold text-xs sm:text-sm text-orange-400 whitespace-nowrap tracking-wide leading-none">
-            Free Horoscope<br/>
-            <span className="text-[9px] sm:text-[10px] text-zinc-400 font-normal uppercase tracking-widest mt-0.5 block">By Mannu Shastri</span>
-          </span>
-          <span className="absolute -right-1.5 -top-1.5 flex h-3.5 w-3.5">
-             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-orange-400 opacity-75"></span>
-             <span className="relative inline-flex rounded-full h-3.5 w-3.5 bg-orange-500 border-2 border-zinc-950"></span>
-          </span>
-        </motion.a>
+        <Link to="/horoscope" className="block">
+          <motion.div
+            initial={{ scale: 0, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            transition={{ delay: 1.6, type: "spring", stiffness: 200, damping: 20 }}
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            className="bg-zinc-950 border border-orange-500/50 text-white p-2 sm:p-2.5 pr-4 sm:pr-5 rounded-full shadow-2xl shadow-orange-600/20 flex items-center justify-center flex-row gap-2.5 group relative cursor-pointer"
+          >
+            <div className="bg-orange-500/10 p-2 sm:p-2.5 rounded-full relative">
+              <span className="absolute -inset-[3px] rounded-full border border-orange-500/30 animate-[spin_4s_linear_infinite]"></span>
+              <MoonStar className="w-5 h-5 sm:w-6 sm:h-6 text-orange-500 relative z-10" />
+            </div>
+            <span className="font-bold text-xs sm:text-sm text-orange-400 whitespace-nowrap tracking-wide leading-none">
+              Free Horoscope<br/>
+              <span className="text-[9px] sm:text-[10px] text-zinc-400 font-normal uppercase tracking-widest mt-0.5 block">By Mannu Shastri</span>
+            </span>
+            <span className="absolute -right-1.5 -top-1.5 flex h-3.5 w-3.5">
+               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-orange-400 opacity-75"></span>
+               <span className="relative inline-flex rounded-full h-3.5 w-3.5 bg-orange-500 border-2 border-zinc-950"></span>
+            </span>
+          </motion.div>
+        </Link>
       </div>
       </main>
     </div>

@@ -62,7 +62,7 @@ export default function SearchBar() {
     <div className="relative w-full sm:w-auto" ref={wrapperRef}>
       <form 
         onSubmit={handleSearch}
-        className="flex items-center bg-zinc-800/50 border border-zinc-700/50 rounded-full px-3 py-1 focus-within:border-orange-500/50 transition-colors"
+        className="flex items-center bg-zinc-900/50 border border-zinc-700/50 rounded-full px-3 py-1 focus-within:border-orange-500/50 transition-colors"
       >
         <input 
           type="text" 
@@ -92,7 +92,7 @@ export default function SearchBar() {
                 <li key={index}>
                   <Link 
                     to={item.path}
-                    className="block px-4 py-3 text-sm text-zinc-300 hover:bg-zinc-800 hover:text-orange-400 transition-colors border-b border-zinc-800/50 last:border-0"
+                    className="block px-4 py-3 text-sm text-zinc-300 hover:bg-zinc-900 hover:text-orange-400 transition-colors border-b border-zinc-800 last:border-0"
                     onClick={() => {
                       setIsOpen(false);
                       setQuery("");
@@ -102,7 +102,7 @@ export default function SearchBar() {
                     {item.keywords.some(kw => kw.toLowerCase().includes(query.toLowerCase())) && (
                       <div className="text-xs text-zinc-500 mt-1 flex gap-1 flex-wrap">
                         {item.keywords.filter(kw => kw.toLowerCase().includes(query.toLowerCase())).map((kw, i) => (
-                          <span key={i} className="bg-zinc-800 px-1.5 py-0.5 rounded text-zinc-400">
+                          <span key={i} className="bg-zinc-900 px-1.5 py-0.5 rounded text-zinc-400">
                             {highlightMatch(kw, query)}
                           </span>
                         ))}

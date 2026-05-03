@@ -1,8 +1,12 @@
-import { useState, useRef, useEffect } from 'react';
+import fs from 'fs';
+
+const content = `import { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Phone, Star, Calendar, Languages, Loader2, ArrowRight, User, MapPin, Clock, MessageCircle, Quote } from 'lucide-react';
 import Header from '../components/Header';
 import SEO from '../components/SEO';
+import PromoPopup from '../components/PromoPopup';
+import LiveActivity from '../components/LiveActivity';
 
 const zodiacSigns = [
   { value: 'Aries', label: 'Aries (Mesh)', hindi: 'मेष', roman: 'Mesh' },
@@ -63,17 +67,17 @@ const generateRashifalData = (rashiValue: string, language: string) => {
   let numberLabel = "Lucky Number";
   
   if (language === "Hindi") {
-    heading = `आज का ${rashi.hindi} राशिफल`;
+    heading = \`आज का \${rashi.hindi} राशिफल\`;
     content = readings.Hindi[readingTarget];
     colorLabel = "शुभ रंग";
     numberLabel = "शुभ अंक";
   } else if (language === "Roman Hindi (Hinglish)") {
-    heading = `Aaj Ka ${rashi.roman} Rashifal`;
+    heading = \`Aaj Ka \${rashi.roman} Rashifal\`;
     content = readings['Roman Hindi (Hinglish)'][readingTarget];
     colorLabel = "Lucky Color";
     numberLabel = "Lucky Number";
   } else {
-    heading = `Today's ${rashi.value} Horoscope`;
+    heading = \`Today's \${rashi.value} Horoscope\`;
     content = readings.English[readingTarget];
   }
   
@@ -93,19 +97,19 @@ const generateKundli = (data: { name: string, dob: string, tob: string, place: s
 
   const messages = {
     'English': [
-      `${name}, today brings positive energy in your life. You may see improvement in career and relationships. Stay calm and trust your decisions.`,
-      `The planetary alignments present a unique opportunity for you, ${name}. Financial stability is indicated today. Keep a balanced perspective.`,
-      `A wave of inspiration surrounds you, ${name}. It is an excellent day to focus on personal goals and cherish moments with loved ones.`
+      \`\${name}, today brings positive energy in your life. You may see improvement in career and relationships. Stay calm and trust your decisions.\`,
+      \`The planetary alignments present a unique opportunity for you, \${name}. Financial stability is indicated today. Keep a balanced perspective.\`,
+      \`A wave of inspiration surrounds you, \${name}. It is an excellent day to focus on personal goals and cherish moments with loved ones.\`
     ],
     'Hindi': [
-      `${name}, आज का दिन आपके लिए शुभ ऊर्जा लाता है। करियर और संबंधों में सुधार होगा। शांत रहें और अपने फैसलों पर विश्वास रखें।`,
-      `ग्रहों की स्थिति आपके लिए अनुकूल है, ${name}। आज वित्तीय स्थिरता के संकेत हैं। अपने दृष्टिकोण को संतुलित रखें।`,
-      `${name}, आज आप प्रेरणा से भरे रहेंगे। व्यक्तिगत लक्ष्यों पर ध्यान केंद्रित करने और प्रियजनों के साथ समय बिताने का यह एक शानदार दिन है।`
+      \`\${name}, आज का दिन आपके लिए शुभ ऊर्जा लाता है। करियर और संबंधों में सुधार होगा। शांत रहें और अपने फैसलों पर विश्वास रखें।\`,
+      \`ग्रहों की स्थिति आपके लिए अनुकूल है, \${name}। आज वित्तीय स्थिरता के संकेत हैं। अपने दृष्टिकोण को संतुलित रखें।\`,
+      \`\${name}, आज आप प्रेरणा से भरे रहेंगे। व्यक्तिगत लक्ष्यों पर ध्यान केंद्रित करने और प्रियजनों के साथ समय बिताने का यह एक शानदार दिन है।\`
     ],
     'Roman Hindi (Hinglish)': [
-      `${name}, aaj ka din aapke liye positive energy la raha hai. Career aur relationship me improvement hoga. Calm raho aur apne decisions par trust karo.`,
-      `Planetary alignments aapke liye unique opportunity bana rahe hain, ${name}. Financial stability aaj dikh rahi hai. Balanced perspective rakhein.`,
-      `Ek acchi inspiration aapke aaspas hai, ${name}. Personal goals par focus karne aur loved ones ke sath time spend karne ka ye acha din hai.`
+      \`\${name}, aaj ka din aapke liye positive energy la raha hai. Career aur relationship me improvement hoga. Calm raho aur apne decisions par trust karo.\`,
+      \`Planetary alignments aapke liye unique opportunity bana rahe hain, \${name}. Financial stability aaj dikh rahi hai. Balanced perspective rakhein.\`,
+      \`Ek acchi inspiration aapke aaspas hai, \${name}. Personal goals par focus karne aur loved ones ke sath time spend karne ka ye acha din hai.\`
     ]
   };
 
@@ -218,6 +222,8 @@ export default function Home() {
         url="https://ais-pre-yiujbuguleggsehuv2syxt-446001962622.asia-east1.run.app"
         structuredData={structuredData}
       />
+      <PromoPopup />
+      <LiveActivity />
       <Header activePage="home" />
 
       <main className="max-w-[1100px] mx-auto px-4 sm:px-6 flex flex-col gap-12 pb-24 md:pb-16 pt-8">
@@ -525,3 +531,6 @@ export default function Home() {
     </div>
   );
 }
+`;
+
+fs.writeFileSync('src/pages/Home.tsx', content);

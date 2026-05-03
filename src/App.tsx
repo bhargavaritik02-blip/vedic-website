@@ -9,6 +9,8 @@ import Horoscope from './pages/Horoscope';
 import About from './pages/About';
 import Contact from './pages/Contact';
 import MobileCTA from './components/MobileCTA';
+import PromoPopup from './components/PromoPopup';
+import LiveActivity from './components/LiveActivity';
 
 export default function App() {
   return (
@@ -25,6 +27,8 @@ export default function App() {
         <Route path="/contact" element={<Contact />} />
       </Routes>
       <MobileCTA />
+      <PromoPopup />
+      <LiveActivity />
     </BrowserRouter>
   );
 }

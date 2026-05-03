@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Star, Calendar, Languages, Loader2, ArrowRight } from 'lucide-react';
+import { Star, Calendar, Languages, Loader2, ArrowRight, User, MapPin, Clock } from 'lucide-react';
 import Header from '../components/Header';
 import SEO from '../components/SEO';
 
@@ -88,6 +88,32 @@ const generateRashifalData = (rashiValue: string, language: string) => {
   };
 };
 
+const generateKundli = (data: { name: string, dob: string, tob: string, place: string }, lang: string) => {
+  const { name } = data;
+
+  const messages = {
+    'English': [
+      `${name}, today brings positive energy in your life. You may see improvement in career and relationships. Stay calm and trust your decisions.`,
+      `The planetary alignments present a unique opportunity for you, ${name}. Financial stability is indicated today. Keep a balanced perspective.`,
+      `A wave of inspiration surrounds you, ${name}. It is an excellent day to focus on personal goals and cherish moments with loved ones.`
+    ],
+    'Hindi': [
+      `${name}, आज का दिन आपके लिए शुभ ऊर्जा लाता है। करियर और संबंधों में सुधार होगा। शांत रहें और अपने फैसलों पर विश्वास रखें।`,
+      `ग्रहों की स्थिति आपके लिए अनुकूल है, ${name}। आज वित्तीय स्थिरता के संकेत हैं। अपने दृष्टिकोण को संतुलित रखें।`,
+      `${name}, आज आप प्रेरणा से भरे रहेंगे। व्यक्तिगत लक्ष्यों पर ध्यान केंद्रित करने और प्रियजनों के साथ समय बिताने का यह एक शानदार दिन है।`
+    ],
+    'Roman Hindi (Hinglish)': [
+      `${name}, aaj ka din aapke liye positive energy la raha hai. Career aur relationship me improvement hoga. Calm raho aur apne decisions par trust karo.`,
+      `Planetary alignments aapke liye unique opportunity bana rahe hain, ${name}. Financial stability aaj dikh rahi hai. Balanced perspective rakhein.`,
+      `Ek acchi inspiration aapke aaspas hai, ${name}. Personal goals par focus karne aur loved ones ke sath time spend karne ka ye acha din hai.`
+    ]
+  };
+
+  const targetLang = messages[lang as keyof typeof messages] ? lang : 'English';
+  const randomIndex = Math.floor(Math.random() * 3);
+  return messages[targetLang as keyof typeof messages][randomIndex];
+};
+
 export default function Horoscope() {
   const [formData, setFormData] = useState({
     rashi: 'Aries',
@@ -99,11 +125,32 @@ export default function Horoscope() {
   
   const resultRef = useRef<HTMLDivElement>(null);
 
+  // Personal Kundli State
+  const [kundliFormData, setKundliFormData] = useState({
+    name: '',
+    dob: '',
+    tob: '',
+    place: '',
+    language: 'English'
+  });
+  
+  const [kundliLoading, setKundliLoading] = useState(false);
+  const [kundliResult, setKundliResult] = useState<string | null>(null);
+  const [kundliError, setKundliError] = useState<string | null>(null);
+
+  const kundliResultRef = useRef<HTMLDivElement>(null);
+
   useEffect(() => {
     if (result && resultRef.current) {
       resultRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
   }, [result]);
+
+  useEffect(() => {
+    if (kundliResult && kundliResultRef.current) {
+      kundliResultRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  }, [kundliResult]);
 
   const structuredData = {
     "@context": "https://schema.org",
@@ -116,6 +163,30 @@ export default function Horoscope() {
   const handleInputChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
+  };
+
+  const handleKundliInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+    const { name, value } = e.target;
+    setKundliFormData(prev => ({ ...prev, [name]: value }));
+    if (kundliError) setKundliError(null);
+  };
+
+  const handleKundliSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!kundliFormData.name || !kundliFormData.dob || !kundliFormData.place) {
+      setKundliError("Please fill all details");
+      return;
+    }
+
+    setKundliLoading(true);
+    setKundliResult(null);
+    setKundliError(null);
+
+    setTimeout(() => {
+      const generated = generateKundli(kundliFormData, kundliFormData.language);
+      setKundliResult(generated);
+      setKundliLoading(false);
+    }, 2000);
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -143,7 +214,7 @@ export default function Horoscope() {
       
       <Header activePage="horoscope" />
 
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 py-10 pb-24 md:pb-20">
+      <main className="max-w-[1100px] mx-auto px-4 sm:px-6 py-10 pb-24 md:pb-20">
         
         {/* Page Header */}
         <div className="text-center max-w-3xl mx-auto mb-10">
@@ -151,7 +222,7 @@ export default function Horoscope() {
             <div className="absolute inset-0 bg-orange-500/20 blur-xl rounded-full group-hover:bg-orange-500/30 transition-all duration-500"></div>
             <Star className="w-8 h-8 text-orange-500 relative z-10" />
           </div>
-          <h1 className="text-4xl md:text-5xl font-serif text-white font-bold leading-tight mb-4">
+          <h1 className="text-2xl md:text-3xl lg:text-4xl lg:text-5xl font-serif text-white font-bold leading-tight mb-4">
             Today's <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-amber-600">Daily Rashifal</span>
           </h1>
           <p className="text-lg text-zinc-400 leading-relaxed max-w-2xl mx-auto">
@@ -162,7 +233,7 @@ export default function Horoscope() {
         <div className="grid lg:grid-cols-12 gap-8 items-start max-w-5xl mx-auto">
           
           {/* Input Form */}
-          <div className="lg:col-span-5 bg-zinc-900/60 border border-zinc-800 rounded-3xl p-6 sm:p-8 relative overflow-hidden backdrop-blur-md shadow-2xl">
+          <div className="lg:col-span-5 bg-zinc-900 border border-zinc-800 rounded-3xl p-6 sm:p-8 relative overflow-hidden backdrop-blur-md shadow-2xl">
             <div className="absolute top-0 right-0 w-64 h-64 bg-orange-500/5 rounded-full blur-3xl pointer-events-none -translate-y-1/2 translate-x-1/2"></div>
             
             <h2 className="text-2xl font-serif text-white mb-6 flex items-center gap-2">
@@ -182,7 +253,7 @@ export default function Horoscope() {
                   name="rashi"
                   value={formData.rashi}
                   onChange={handleInputChange}
-                  className="w-full bg-black/50 border border-zinc-700 focus:border-orange-500 focus:ring-1 focus:ring-orange-500/50 rounded-xl px-4 py-3.5 outline-none text-zinc-200 transition-all appearance-none cursor-pointer"
+                  className="w-full bg-[#050505] border border-zinc-700 focus:border-orange-500 focus:ring-1 focus:ring-orange-500/50 rounded-xl px-4 py-3.5 outline-none text-zinc-200 transition-all appearance-none cursor-pointer"
                 >
                   {zodiacSigns.map(sign => (
                     <option key={sign.value} value={sign.value}>{sign.label}</option>
@@ -200,7 +271,7 @@ export default function Horoscope() {
                   name="language"
                   value={formData.language}
                   onChange={handleInputChange}
-                  className="w-full bg-black/50 border border-zinc-700 focus:border-orange-500 focus:ring-1 focus:ring-orange-500/50 rounded-xl px-4 py-3.5 outline-none text-zinc-200 transition-all appearance-none cursor-pointer"
+                  className="w-full bg-[#050505] border border-zinc-700 focus:border-orange-500 focus:ring-1 focus:ring-orange-500/50 rounded-xl px-4 py-3.5 outline-none text-zinc-200 transition-all appearance-none cursor-pointer"
                 >
                   <option value="English">English</option>
                   <option value="Hindi">Hindi (हिंदी)</option>
@@ -256,7 +327,7 @@ export default function Horoscope() {
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
-                  className="flex-1 border border-orange-500/20 rounded-3xl flex flex-col items-center justify-center p-12 text-center bg-zinc-900/40 relative overflow-hidden h-full"
+                  className="flex-1 border border-orange-500/20 rounded-3xl flex flex-col items-center justify-center p-12 text-center bg-zinc-900 relative overflow-hidden h-full"
                 >
                   <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/stardust.png')] opacity-20"></div>
                   <div className="w-20 h-20 relative mb-8">
@@ -278,7 +349,7 @@ export default function Horoscope() {
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.5 }}
-                  className="bg-zinc-900/80 border border-orange-500/30 rounded-3xl p-6 sm:p-10 relative overflow-hidden shadow-2xl"
+                  className="bg-zinc-900 border border-orange-500/30 rounded-3xl p-6 sm:p-10 relative overflow-hidden shadow-2xl"
                 >
                   {/* Decorative Elements */}
                   <div className="absolute top-0 right-0 w-64 h-64 bg-orange-500/10 rounded-full blur-3xl pointer-events-none -translate-y-1/2 translate-x-1/2"></div>
@@ -290,7 +361,7 @@ export default function Horoscope() {
                       </span>
                       <Star className="w-5 h-5 text-amber-500" />
                     </div>
-                    <h3 className="text-3xl md:text-4xl font-serif text-white font-bold leading-tight">
+                    <h3 className="text-2xl md:text-3xl lg:text-4xl font-serif text-white font-bold leading-tight">
                       {result.heading}
                     </h3>
                   </div>
@@ -300,11 +371,11 @@ export default function Horoscope() {
                   </div>
 
                   <div className="grid grid-cols-2 gap-4 mb-8">
-                    <div className="bg-black/40 border border-zinc-800 rounded-2xl p-5 text-center">
+                    <div className="bg-[#050505] border border-zinc-800 rounded-2xl p-5 text-center">
                       <span className="block text-sm text-zinc-500 mb-1">{result.colorLabel}</span>
                       <span className="text-lg font-bold text-white capitalize">{result.luckyColor}</span>
                     </div>
-                    <div className="bg-black/40 border border-zinc-800 rounded-2xl p-5 text-center">
+                    <div className="bg-[#050505] border border-zinc-800 rounded-2xl p-5 text-center">
                       <span className="block text-sm text-zinc-500 mb-1">{result.numberLabel}</span>
                       <span className="text-lg font-bold text-white max-w-full truncate">{result.luckyNumber}</span>
                     </div>
@@ -327,9 +398,223 @@ export default function Horoscope() {
                 </motion.div>
               )}
             </AnimatePresence>
-
           </div>
         </div>
+
+        {/* SECTION 2: Personal Kundli */}
+        <div className="mt-32 border-t border-zinc-800 pt-20 max-w-5xl mx-auto">
+          <div className="text-center max-w-3xl mx-auto mb-10">
+            <div className="inline-flex items-center justify-center p-3 bg-zinc-900/50 rounded-full mb-6">
+              <User className="w-8 h-8 text-zinc-400" />
+            </div>
+            <h2 className="text-2xl md:text-3xl lg:text-4xl font-serif text-white font-bold leading-tight mb-4">
+              Free Personal <span className="text-orange-500">Kundli Reading</span>
+            </h2>
+            <p className="text-lg text-zinc-400 leading-relaxed max-w-2xl mx-auto">
+              Get customized astrological insights based on your exact birth details.
+            </p>
+          </div>
+
+          <div className="grid lg:grid-cols-12 gap-8 items-start">
+            {/* Kundli Form */}
+            <div className="lg:col-span-5 bg-zinc-900 border border-zinc-800 rounded-3xl p-6 sm:p-8 shadow-2xl relative overflow-hidden backdrop-blur-md">
+              <h3 className="text-2xl font-serif text-white mb-6 flex items-center gap-2">
+                <Star className="w-5 h-5 text-orange-500" />
+                Birth Details
+              </h3>
+
+              <form onSubmit={handleKundliSubmit} className="space-y-6 relative z-10">
+                
+                {/* Name */}
+                <div className="space-y-2">
+                  <label htmlFor="name" className="text-sm font-medium text-zinc-400 flex items-center gap-2">
+                    <User className="w-4 h-4" /> Full Name
+                  </label>
+                  <input 
+                    type="text" 
+                    id="name"
+                    name="name"
+                    value={kundliFormData.name}
+                    onChange={handleKundliInputChange}
+                    placeholder="Enter your name"
+                    className="w-full bg-[#050505] border border-zinc-700 focus:border-orange-500 focus:ring-1 focus:ring-orange-500/50 rounded-xl px-4 py-3 outline-none text-zinc-200 transition-all"
+                    required
+                  />
+                </div>
+
+                {/* Date & Time */}
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <label htmlFor="dob" className="text-sm font-medium text-zinc-400 flex items-center gap-2">
+                      <Calendar className="w-4 h-4" /> Date of Birth
+                    </label>
+                    <input 
+                      type="date" 
+                      id="dob"
+                      name="dob"
+                      value={kundliFormData.dob}
+                      onChange={handleKundliInputChange}
+                      className="w-full bg-[#050505] border border-zinc-700 focus:border-orange-500 focus:ring-1 focus:ring-orange-500/50 rounded-xl px-4 py-3 outline-none text-zinc-200 transition-all [color-scheme:dark]"
+                      required
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <label htmlFor="tob" className="text-sm font-medium text-zinc-400 flex items-center gap-2">
+                      <Clock className="w-4 h-4" /> Time
+                    </label>
+                    <input 
+                      type="time" 
+                      id="tob"
+                      name="tob"
+                      value={kundliFormData.tob}
+                      onChange={handleKundliInputChange}
+                      className="w-full bg-[#050505] border border-zinc-700 focus:border-orange-500 focus:ring-1 focus:ring-orange-500/50 rounded-xl px-4 py-3 outline-none text-zinc-200 transition-all [color-scheme:dark]"
+                    />
+                  </div>
+                </div>
+
+                {/* Place */}
+                <div className="space-y-2">
+                  <label htmlFor="place" className="text-sm font-medium text-zinc-400 flex items-center gap-2">
+                    <MapPin className="w-4 h-4" /> Place of Birth
+                  </label>
+                  <input 
+                    type="text" 
+                    id="place"
+                    name="place"
+                    value={kundliFormData.place}
+                    onChange={handleKundliInputChange}
+                    placeholder="City, State, Country"
+                    className="w-full bg-[#050505] border border-zinc-700 focus:border-orange-500 focus:ring-1 focus:ring-orange-500/50 rounded-xl px-4 py-3 outline-none text-zinc-200 transition-all"
+                    required
+                  />
+                </div>
+
+                {/* Language (Kundli) */}
+                <div className="space-y-2">
+                  <label htmlFor="kundliLanguage" className="text-sm font-medium text-zinc-400 flex items-center gap-2">
+                    <Languages className="w-4 h-4" /> Language preference
+                  </label>
+                  <select 
+                    id="kundliLanguage"
+                    name="language"
+                    value={kundliFormData.language}
+                    onChange={handleKundliInputChange}
+                    className="w-full bg-[#050505] border border-zinc-700 focus:border-orange-500 focus:ring-1 focus:ring-orange-500/50 rounded-xl px-4 py-3 outline-none text-zinc-200 transition-all appearance-none cursor-pointer"
+                  >
+                    <option value="English">English</option>
+                    <option value="Hindi">Hindi (हिंदी)</option>
+                    <option value="Roman Hindi (Hinglish)">Roman Hindi (Hinglish)</option>
+                  </select>
+                </div>
+
+                {kundliError && (
+                  <div className="bg-red-500/10 border border-red-500/20 text-red-400 text-sm p-3 rounded-lg">
+                    {kundliError}
+                  </div>
+                )}
+
+                <button 
+                  type="submit" 
+                  disabled={kundliLoading}
+                  className="w-full bg-gradient-to-r from-zinc-700 to-zinc-600 hover:from-orange-600 hover:to-amber-600 text-white font-bold py-4 px-6 rounded-xl transition-colors duration-300 shadow-lg disabled:opacity-70 disabled:cursor-not-allowed flex items-center justify-center gap-2 mt-2"
+                >
+                  {kundliLoading ? (
+                    <>
+                      <Loader2 className="w-5 h-5 animate-spin" />
+                      Analyzing Chart...
+                    </>
+                  ) : (
+                    <>
+                      Generate My Reading
+                      <ArrowRight className="w-5 h-5" />
+                    </>
+                  )}
+                </button>
+              </form>
+            </div>
+
+            {/* Kundli Result Area */}
+            <div className="lg:col-span-7 flex flex-col h-full min-h-[400px]" ref={kundliResultRef}>
+              <AnimatePresence mode="wait">
+                {!kundliResult && !kundliLoading && (
+                  <motion.div 
+                    key="empty-kundli"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    className="flex-1 border border-zinc-800 border-dashed rounded-3xl flex flex-col items-center justify-center p-8 sm:p-12 text-center bg-zinc-900/20 h-full"
+                  >
+                    <div className="w-16 h-16 sm:w-20 sm:h-20 bg-zinc-900 rounded-full flex items-center justify-center mb-6">
+                      <Calendar className="w-8 h-8 sm:w-10 sm:h-10 text-zinc-700" />
+                    </div>
+                    <h3 className="text-xl font-serif text-zinc-400 mb-2">Cosmic Canvas</h3>
+                    <p className="text-zinc-500 max-w-sm mb-4">
+                      Fill out the personal details form to generate your unique Kundli analysis.
+                    </p>
+                  </motion.div>
+                )}
+
+                {kundliLoading && (
+                  <motion.div 
+                    key="loading-kundli"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    className="flex-1 border border-zinc-700 rounded-3xl flex flex-col items-center justify-center p-12 text-center bg-zinc-900 relative overflow-hidden h-full"
+                  >
+                    <div className="w-20 h-20 relative mb-8">
+                      <div className="absolute inset-0 border-t-2 border-orange-500 rounded-full animate-spin"></div>
+                      <div className="absolute inset-2 border-r-2 border-zinc-600 rounded-full animate-spin animation-delay-200" style={{ animationDirection: 'reverse' }}></div>
+                      <Loader2 className="w-6 h-6 text-zinc-400 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 animate-spin" />
+                    </div>
+                    <h3 className="text-xl font-serif text-white mb-2">Charting Astrological Houses...</h3>
+                    <p className="text-sm text-zinc-400 animate-pulse">
+                      Analyzing planetary positions...
+                    </p>
+                  </motion.div>
+                )}
+
+                {kundliResult && !kundliLoading && (
+                  <motion.div 
+                    key="result-kundli"
+                    initial={{ opacity: 0, scale: 0.95 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ duration: 0.4 }}
+                    className="bg-zinc-900 border border-zinc-700 rounded-3xl p-6 sm:p-10 shadow-2xl relative overflow-hidden h-full flex flex-col justify-center"
+                  >
+                    <div className="absolute top-0 right-0 w-32 h-32 bg-orange-500/10 rounded-full blur-3xl pointer-events-none -translate-y-1/2 translate-x-1/2"></div>
+                    
+                    <div className="mb-6 pb-4 border-b border-zinc-800">
+                      <h3 className="text-2xl md:text-3xl font-serif text-white mb-2">Cosmic Blueprint</h3>
+                      <p className="text-zinc-500 text-sm flex gap-3 flex-wrap">
+                        <span className="flex items-center gap-1"><User className="w-3.5 h-3.5"/> {kundliFormData.name}</span>
+                        <span className="flex items-center gap-1"><Calendar className="w-3.5 h-3.5"/> {kundliFormData.dob}</span>
+                        <span className="flex items-center gap-1"><MapPin className="w-3.5 h-3.5"/> {kundliFormData.place}</span>
+                      </p>
+                    </div>
+
+                    <div className="text-xl md:text-2xl text-zinc-200 font-serif leading-relaxed italic mb-8 relative z-10 px-4 border-l-4 border-orange-500/50">
+                      "{kundliResult}"
+                    </div>
+
+                    <div className="mt-auto pt-6 text-center">
+                       <a 
+                        href={`https://wa.me/919928433259?text=Hello,%20I%20have%20generated%20my%20free%20Kundli%20Reading.%20My%20name%20is%20${kundliFormData.name}.%20I%20want%20to%20discuss%20further.`}
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center justify-center gap-2 bg-transparent border border-zinc-700 hover:border-orange-500 hover:text-orange-500 text-zinc-300 font-bold py-3 px-6 rounded-xl transition-all"
+                      >
+                        Deep Dive with Astrologer
+                      </a>
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
+          </div>
+        </div>
+
       </main>
     </div>
   );

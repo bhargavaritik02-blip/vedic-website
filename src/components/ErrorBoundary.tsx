@@ -40,7 +40,7 @@ export class ErrorBoundary extends Component<Props, State> {
       }
       
       return (
-        <div className="flex flex-col items-center justify-center p-8 bg-black/40 border border-red-500/20 rounded-2xl text-center backdrop-blur-sm w-full h-full min-h-[300px]">
+        <div className="flex flex-col items-center justify-center p-8 bg-[#050505] border border-red-500/20 rounded-2xl text-center backdrop-blur-sm w-full h-full min-h-[300px]">
           <div className="w-16 h-16 bg-red-500/10 rounded-full flex items-center justify-center mb-4">
             <AlertTriangle className="w-8 h-8 text-red-500" />
           </div>
@@ -60,7 +60,7 @@ export class ErrorBoundary extends Component<Props, State> {
               href="https://wa.me/919928433259?text=I'm%20facing%20an%20error%20with%20the%20free%20horoscope."
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center justify-center gap-2 bg-zinc-800 hover:bg-zinc-700 text-white px-6 py-2.5 rounded-xl font-medium transition-colors"
+              className="flex items-center justify-center gap-2 bg-zinc-900 hover:bg-zinc-700 text-white px-6 py-2.5 rounded-xl font-medium transition-colors"
             >
               <MessageSquare className="w-4 h-4" />
               Contact Support

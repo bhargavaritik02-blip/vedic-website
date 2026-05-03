@@ -28,7 +28,7 @@ export default function Header({ activePage }: HeaderProps) {
 
   return (
     <header className="sticky top-0 z-50 bg-zinc-950/90 backdrop-blur-md border-b border-zinc-800">
-      <div className="max-w-[1440px] mx-auto px-4 lg:px-6 py-4 flex items-center justify-between relative z-50">
+      <div className="max-w-[1100px] mx-auto px-4 lg:px-6 py-4 flex items-center justify-between relative z-50">
         
         {/* Logo Section */}
         <Link to="/" className="flex items-center gap-3 shrink-0">
@@ -58,7 +58,7 @@ export default function Header({ activePage }: HeaderProps) {
           </div>
           <button 
             onClick={toggleMobileMenu}
-            className="text-white p-2 focus:outline-none hover:bg-zinc-800 rounded-lg transition-colors"
+            className="text-white p-2 focus:outline-none hover:bg-zinc-900 rounded-lg transition-colors"
             aria-label="Toggle menu"
           >
             {isMobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
@@ -74,7 +74,7 @@ export default function Header({ activePage }: HeaderProps) {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
             transition={{ duration: 0.2 }}
-            className="lg:hidden absolute top-full left-0 w-full bg-zinc-950 border-b border-zinc-800 shadow-2xl py-4 flex flex-col px-4 z-40"
+            className="lg:hidden absolute top-full left-0 w-full bg-zinc-900 border-b border-zinc-800 shadow-2xl py-4 flex flex-col px-4 z-40"
           >
             <div className="mb-4 sm:hidden block">
               <SearchBar />

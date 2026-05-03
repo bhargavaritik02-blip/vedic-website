@@ -25,7 +25,7 @@ export default function LostLoveBackIndia() {
       
       <Header activePage="india-love" />
 
-      <main className="max-w-[1440px] mx-auto px-4 sm:px-6 flex flex-col gap-12 py-10 pb-24 md:pb-10">
+      <main className="max-w-[1100px] mx-auto px-4 sm:px-6 flex flex-col gap-12 py-10 pb-24 md:pb-10">
         
         {/* HERO SECTION */}
         <section className="relative overflow-hidden rounded-[2rem] bg-gradient-to-b from-zinc-900 to-black border border-zinc-800 text-center py-12 px-6 sm:py-16 md:py-24">
@@ -35,7 +35,7 @@ export default function LostLoveBackIndia() {
             Trusted by 55,000+ Clients
           </span>
           
-          <h1 className="text-4xl md:text-5xl lg:text-6xl font-serif text-white font-bold leading-tight max-w-4xl mx-auto mb-6">
+          <h1 className="text-2xl md:text-3xl lg:text-4xl lg:text-5xl lg:text-6xl font-serif text-white font-bold leading-tight max-w-4xl mx-auto mb-6">
             Lost Love Back Specialist in <span className="text-orange-500">India</span>
           </h1>
           
@@ -54,14 +54,14 @@ export default function LostLoveBackIndia() {
         </section>
 
         {/* GET EX LOVE BACK SECTION */}
-        <section className="bg-zinc-900/40 border border-zinc-800 rounded-[2rem] p-6 sm:p-8 md:p-14 flex flex-col md:flex-row gap-8 items-center">
+        <section className="bg-zinc-900 border border-zinc-800 rounded-[2rem] p-6 sm:p-8 md:p-14 flex flex-col md:flex-row gap-8 items-center">
           <div className="md:w-1/2">
-            <h2 className="text-3xl md:text-4xl font-serif text-white mb-6">Get Your <span className="text-orange-500">Ex Love Back</span> Quickly</h2>
+            <h2 className="text-2xl md:text-3xl lg:text-4xl font-serif text-white mb-6">Get Your <span className="text-orange-500">Ex Love Back</span> Quickly</h2>
             <p className="text-zinc-400 text-lg leading-relaxed mb-6">
               Breakups and misunderstandings can create distance in relationships. Our expert solutions help you reconnect with your partner, rebuild trust, and bring back love into your life.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 mt-8">
-              <a href="tel:+919928433259" className="flex items-center justify-center gap-2 bg-zinc-800 hover:bg-zinc-700 text-white py-3 px-6 rounded-xl transition-colors font-medium">
+              <a href="tel:+919928433259" className="flex items-center justify-center gap-2 bg-zinc-900 hover:bg-zinc-700 text-white py-3 px-6 rounded-xl transition-colors font-medium">
                 <Phone className="w-4 h-4 text-orange-400" /> Talk to Expert
               </a>
             </div>
@@ -83,7 +83,7 @@ export default function LostLoveBackIndia() {
         {/* COMMON REASONS SECTION */}
         <section className="py-10">
           <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-serif text-white mb-4">Common Reasons for <span className="text-orange-500">Breakup</span></h2>
+            <h2 className="text-2xl md:text-3xl lg:text-4xl font-serif text-white mb-4">Common Reasons for <span className="text-orange-500">Breakup</span></h2>
             <p className="text-zinc-400 max-w-2xl mx-auto">Understanding the real cause is the first step to finding the perfect solution.</p>
           </div>
           
@@ -114,9 +114,9 @@ export default function LostLoveBackIndia() {
         </section>
 
         {/* WHY CHOOSE US */}
-        <section className="bg-zinc-900/40 border border-zinc-800 rounded-[2rem] p-6 sm:p-8 md:p-14 mb-10">
+        <section className="bg-zinc-900 border border-zinc-800 rounded-[2rem] p-6 sm:p-8 md:p-14 mb-10">
           <div className="text-center mb-10">
-            <h2 className="text-3xl md:text-4xl font-serif text-white mb-4">Why Choose Our <span className="text-orange-500">Services?</span></h2>
+            <h2 className="text-2xl md:text-3xl lg:text-4xl font-serif text-white mb-4">Why Choose Our <span className="text-orange-500">Services?</span></h2>
             <p className="text-zinc-400 max-w-2xl mx-auto">We provide accurate, fast, and confidential solutions tailored to your specific situation.</p>
           </div>
           
@@ -147,7 +147,7 @@ export default function LostLoveBackIndia() {
         {/* OUR SOLUTIONS INCLUDE */}
         <section className="py-10">
           <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-serif text-white mb-4">Our Solutions <span className="text-orange-500">Include</span></h2>
+            <h2 className="text-2xl md:text-3xl lg:text-4xl font-serif text-white mb-4">Our Solutions <span className="text-orange-500">Include</span></h2>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto">
             <div className="bg-zinc-900 border border-zinc-800 p-8 rounded-2xl">
@@ -166,9 +166,9 @@ export default function LostLoveBackIndia() {
         </section>
 
         {/* HOW IT WORKS */}
-        <section className="bg-zinc-900/40 border border-zinc-800 rounded-[2rem] p-6 sm:p-8 md:p-14">
+        <section className="bg-zinc-900 border border-zinc-800 rounded-[2rem] p-6 sm:p-8 md:p-14">
           <div className="text-center mb-10">
-            <h2 className="text-3xl md:text-4xl font-serif text-white mb-4">How It <span className="text-orange-500">Works?</span></h2>
+            <h2 className="text-2xl md:text-3xl lg:text-4xl font-serif text-white mb-4">How It <span className="text-orange-500">Works?</span></h2>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 ml:grid-cols-4 md:grid-cols-4 gap-6 max-w-5xl mx-auto relative">
             <div className="bg-zinc-900 border border-zinc-800 p-6 rounded-2xl text-center relative z-10">
@@ -191,14 +191,14 @@ export default function LostLoveBackIndia() {
               <h3 className="text-white font-bold mb-2">See Results</h3>
               <p className="text-sm text-zinc-400">Follow steps and witness changes.</p>
             </div>
-            <div className="hidden md:block absolute top-12 left-10 right-10 h-0.5 bg-zinc-800 z-0"></div>
+            <div className="hidden md:block absolute top-12 left-10 right-10 h-0.5 bg-zinc-900 z-0"></div>
           </div>
         </section>
 
         {/* TESTIMONIALS */}
         <section className="py-10">
           <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-serif text-white mb-4">Client <span className="text-orange-500">Testimonials</span></h2>
+            <h2 className="text-2xl md:text-3xl lg:text-4xl font-serif text-white mb-4">Client <span className="text-orange-500">Testimonials</span></h2>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto">
             <div className="bg-zinc-900 border border-zinc-800 p-6 rounded-2xl italic">
@@ -217,9 +217,9 @@ export default function LostLoveBackIndia() {
         </section>
 
         {/* FAQ SECTION */}
-        <section className="bg-zinc-900/40 border border-zinc-800 rounded-[2rem] p-6 sm:p-8 md:p-14">
+        <section className="bg-zinc-900 border border-zinc-800 rounded-[2rem] p-6 sm:p-8 md:p-14">
           <div className="text-center mb-10">
-            <h2 className="text-3xl md:text-4xl font-serif text-white mb-4">Frequently Asked <span className="text-orange-500">Questions</span></h2>
+            <h2 className="text-2xl md:text-3xl lg:text-4xl font-serif text-white mb-4">Frequently Asked <span className="text-orange-500">Questions</span></h2>
           </div>
           <div className="max-w-3xl mx-auto flex flex-col gap-4">
              <div className="border-b border-zinc-800 pb-4">
@@ -243,14 +243,14 @@ export default function LostLoveBackIndia() {
 
         {/* FINAL CTA */}
         <section className="bg-gradient-to-r from-orange-600 to-amber-600 rounded-[2rem] p-8 sm:p-10 md:p-16 text-center text-white relative overflow-hidden">
-          <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-3xl pointer-events-none"></div>
+          <div className="absolute top-0 right-0 w-64 h-64 bg-zinc-900/10 rounded-full blur-3xl pointer-events-none"></div>
           <div className="relative z-10">
             <h2 className="text-3xl md:text-5xl font-serif font-bold mb-6">Take Action Now</h2>
             <p className="text-white/90 text-lg mb-10 max-w-2xl mx-auto">
               Do not let your love slip away. Contact now and get your lost love back with expert guidance.
             </p>
             <div className="flex flex-col sm:flex-row justify-center gap-4">
-              <a href="https://wa.me/919928433259" target="_blank" rel="noopener noreferrer" className="w-full sm:w-auto bg-white text-orange-600 hover:bg-zinc-100 font-bold py-4 px-8 rounded-xl flex items-center justify-center gap-3 transition-colors shadow-xl">
+              <a href="https://wa.me/919928433259" target="_blank" rel="noopener noreferrer" className="w-full sm:w-auto bg-zinc-900 text-orange-600 hover:bg-zinc-100 font-bold py-4 px-8 rounded-xl flex items-center justify-center gap-3 transition-colors shadow-xl">
                 <MessageCircle className="w-5 h-5 text-[#25D366]" /> Chat on WhatsApp
               </a>
               <a href="tel:+919928433259" className="w-full sm:w-auto bg-black/20 hover:bg-black/30 border border-white/30 text-white font-bold py-4 px-8 rounded-xl flex items-center justify-center gap-3 transition-colors">
@@ -263,8 +263,8 @@ export default function LostLoveBackIndia() {
       </main>
 
       {/* FOOTER */}
-      <footer className="border-t border-zinc-900 bg-black mt-10 pb-20 md:pb-0">
-        <div className="max-w-[1440px] mx-auto px-6 py-8 flex flex-col md:flex-row justify-between items-center gap-6">
+      <footer className="border-t border-zinc-800 bg-black mt-10 pb-20 md:pb-0">
+        <div className="max-w-[1100px] mx-auto px-6 py-8 flex flex-col md:flex-row justify-between items-center gap-6">
           <div className="text-center md:text-left">
             <h4 className="text-lg font-bold text-white mb-2">Astrologer Mannu Shastri Ji</h4>
             <p className="text-sm text-zinc-500 max-w-md">Expert in Vedic Astrology, providing genuine solutions to bring happiness back into your life.</p>

@@ -7,7 +7,7 @@ import SEO from '../components/SEO';
 
 function FaqItem({ question, answer, isOpen, onClick }: { question: string, answer: string, isOpen: boolean, onClick: () => void, key?: string | number }) {
   return (
-    <div className="border-b border-zinc-800/60 last:border-0 relative z-10">
+    <div className="border-b border-zinc-800 last:border-0 relative z-10">
       <button 
         onClick={onClick}
         className="w-full flex items-center justify-between py-5 text-left focus:outline-none group"
@@ -18,7 +18,7 @@ function FaqItem({ question, answer, isOpen, onClick }: { question: string, answ
         <motion.div
           animate={{ rotate: isOpen ? 180 : 0 }}
           transition={{ duration: 0.4, ease: "easeOut" }}
-          className={`shrink-0 ml-4 p-1 rounded-full transition-colors ${isOpen ? 'bg-amber-500/20 text-amber-400' : 'bg-zinc-800 text-zinc-400 group-hover:bg-zinc-700'}`}
+          className={`shrink-0 ml-4 p-1 rounded-full transition-colors ${isOpen ? 'bg-amber-500/20 text-amber-400' : 'bg-zinc-900 text-zinc-400 group-hover:bg-zinc-700'}`}
         >
           <ChevronDown className="w-5 h-5" />
         </motion.div>
@@ -122,7 +122,7 @@ export default function Services() {
         structuredData={structuredData}
       />
       <Header activePage="services" />
-      <main className="max-w-[1440px] mx-auto px-4 sm:px-6 flex flex-col gap-12 py-10 pb-24 md:pb-10">
+      <main className="max-w-[1100px] mx-auto px-4 sm:px-6 flex flex-col gap-12 py-10 pb-24 md:pb-10">
         
         {/* HERO SECTION */}
         <section className="relative overflow-hidden rounded-[2rem] bg-gradient-to-b from-zinc-900 to-black border border-zinc-800 text-center py-12 px-6 sm:py-16 md:py-24">
@@ -131,7 +131,7 @@ export default function Services() {
           <span className="inline-block px-4 py-1.5 rounded-full bg-amber-500/10 border border-amber-500/20 text-amber-500 text-xs font-bold tracking-widest uppercase mb-6">
             Trusted by 55,000+ Satisfied Clients Across India
           </span>
-          <h1 className="text-4xl md:text-5xl lg:text-6xl font-serif mb-6 text-white leading-tight max-w-4xl mx-auto">
+          <h1 className="text-2xl md:text-3xl lg:text-4xl lg:text-5xl lg:text-6xl font-serif mb-6 text-white leading-tight max-w-4xl mx-auto">
             Powerful Astrology Solutions for <br/>
             <span className="text-amber-500 italic">Love & Relationship Problems</span>
           </h1>
@@ -203,7 +203,7 @@ export default function Services() {
                 </ul>
               </div>
               <div className="grid grid-cols-2 gap-3 mt-auto relative z-10">
-                <a href="https://wa.me/919928433259?text=Hello%20I%20need%20solution%20for%20my%20problem" className="bg-zinc-800 hover:bg-zinc-700 text-white text-xs font-bold py-2.5 rounded-lg flex items-center justify-center gap-1.5 transition-colors">
+                <a href="https://wa.me/919928433259?text=Hello%20I%20need%20solution%20for%20my%20problem" className="bg-zinc-900 hover:bg-zinc-700 text-white text-xs font-bold py-2.5 rounded-lg flex items-center justify-center gap-1.5 transition-colors">
                   <MessageCircle className="w-4 h-4 text-[#25D366]" /> WhatsApp
                 </a>
                 <a href="tel:+919928433259" className="bg-amber-600/10 hover:bg-amber-600/20 text-amber-500 text-xs font-bold py-2.5 rounded-lg flex items-center justify-center gap-1.5 transition-colors border border-amber-600/30">
@@ -215,9 +215,9 @@ export default function Services() {
         </section>
 
         {/* WHY CHOOSE US */}
-        <section className="bg-zinc-900/40 border border-zinc-800 rounded-[2rem] p-6 sm:p-8 md:p-14 flex flex-col lg:flex-row gap-8 lg:gap-12 items-center">
+        <section className="bg-zinc-900 border border-zinc-800 rounded-[2rem] p-6 sm:p-8 md:p-14 flex flex-col lg:flex-row gap-8 lg:gap-12 items-center">
           <div className="w-full lg:w-1/2 mb-4 lg:mb-0 text-center lg:text-left">
-            <h2 className="text-3xl md:text-4xl font-serif text-white mb-6">
+            <h2 className="text-2xl md:text-3xl lg:text-4xl font-serif text-white mb-6">
               Why <span className="text-amber-500">55,000+</span> Clients Trust Us?
             </h2>
             <p className="text-zinc-400 leading-relaxed mb-8">
@@ -238,7 +238,7 @@ export default function Services() {
               "100% privacy and confidentiality",
               "Affordable and genuine services"
             ].map((point, idx) => (
-              <div key={idx} className="bg-zinc-950 border border-zinc-800 rounded-xl p-4 flex items-start gap-4">
+              <div key={idx} className="bg-zinc-900 border border-zinc-800 rounded-xl p-4 flex items-start gap-4">
                 <div className="w-6 h-6 rounded-full bg-amber-500/10 flex items-center justify-center shrink-0 mt-0.5">
                   <Star className="w-3.5 h-3.5 text-amber-500" fill="currentColor" />
                 </div>
@@ -250,9 +250,9 @@ export default function Services() {
 
         {/* PROCESS SECTION */}
         <section className="py-10 text-center">
-          <h2 className="text-3xl md:text-4xl font-serif text-white mb-12">How It <span className="text-amber-500">Works?</span></h2>
+          <h2 className="text-2xl md:text-3xl lg:text-4xl font-serif text-white mb-12">How It <span className="text-amber-500">Works?</span></h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 relative">
-            <div className="hidden lg:block absolute top-8 left-1/4 right-1/4 h-0.5 bg-zinc-800"></div>
+            <div className="hidden lg:block absolute top-8 left-1/4 right-1/4 h-0.5 bg-zinc-900"></div>
             {[
               { num: '1', title: 'Contact Us', desc: 'Contact on WhatsApp or Call' },
               { num: '2', title: 'Share Truth', desc: 'Share your problem' },
@@ -271,13 +271,13 @@ export default function Services() {
         </section>
 
         {/* TESTIMONIALS */}
-        <section className="bg-zinc-900/60 border border-zinc-800 rounded-[2rem] p-6 sm:p-8 md:p-14">
+        <section className="bg-zinc-900 border border-zinc-800 rounded-[2rem] p-6 sm:p-8 md:p-14">
           <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-serif text-white mb-4">Real Words. <span className="text-amber-500">Real Results.</span></h2>
+            <h2 className="text-2xl md:text-3xl lg:text-4xl font-serif text-white mb-4">Real Words. <span className="text-amber-500">Real Results.</span></h2>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {testimonials.map((testi, idx) => (
-              <div key={idx} className="bg-zinc-950 border border-zinc-800 rounded-2xl p-6 relative">
+              <div key={idx} className="bg-zinc-900 border border-zinc-800 rounded-2xl p-6 relative">
                 <div className="flex gap-1 mb-4 text-amber-500">
                   <Star className="w-4 h-4" fill="currentColor" />
                   <Star className="w-4 h-4" fill="currentColor" />
@@ -298,9 +298,9 @@ export default function Services() {
         {/* FAQ SECTION */}
         <section className="max-w-3xl mx-auto w-full py-10">
           <div className="text-center mb-10">
-            <h2 className="text-3xl md:text-4xl font-serif text-white mb-4">Frequently Asked <span className="text-amber-500">Questions</span></h2>
+            <h2 className="text-2xl md:text-3xl lg:text-4xl font-serif text-white mb-4">Frequently Asked <span className="text-amber-500">Questions</span></h2>
           </div>
-          <div className="bg-zinc-900/50 border border-zinc-800 rounded-2xl p-4 sm:p-8 relative">
+          <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-4 sm:p-8 relative">
             {faqs.map((faq, index) => (
               <FaqItem
                 key={index}
@@ -321,7 +321,7 @@ export default function Services() {
               Don't let your problem grow bigger. Take action now and get instant help to restore the peace and love you deserve.
             </p>
             <div className="flex flex-col sm:flex-row justify-center gap-4">
-              <a href="https://wa.me/919928433259?text=Hello%20I%20need%20solution%20for%20my%20problem" target="_blank" rel="noopener noreferrer" className="w-full sm:w-auto bg-white text-orange-600 hover:bg-zinc-100 font-bold py-4 px-8 rounded-xl flex items-center justify-center gap-3 transition-colors shadow-xl">
+              <a href="https://wa.me/919928433259?text=Hello%20I%20need%20solution%20for%20my%20problem" target="_blank" rel="noopener noreferrer" className="w-full sm:w-auto bg-zinc-900 text-orange-600 hover:bg-zinc-100 font-bold py-4 px-8 rounded-xl flex items-center justify-center gap-3 transition-colors shadow-xl">
                 <MessageCircle className="w-5 h-5 text-[#25D366]" /> Chat on WhatsApp
               </a>
               <a href="tel:+919928433259" className="w-full sm:w-auto bg-black/20 hover:bg-black/30 border border-white/30 text-white font-bold py-4 px-8 rounded-xl flex items-center justify-center gap-3 transition-colors">
@@ -334,8 +334,8 @@ export default function Services() {
       </main>
 
       {/* FOOTER */}
-      <footer id="contact" className="border-t border-zinc-900 bg-black mt-10 pb-20 md:pb-0">
-        <div className="max-w-[1440px] mx-auto px-6 py-8 flex flex-col md:flex-row justify-between items-center gap-6">
+      <footer id="contact" className="border-t border-zinc-800 bg-black mt-10 pb-20 md:pb-0">
+        <div className="max-w-[1100px] mx-auto px-6 py-8 flex flex-col md:flex-row justify-between items-center gap-6">
           <div className="text-center md:text-left">
             <h4 className="text-lg font-bold text-white mb-2">Astrologer Mannu Shastri Ji</h4>
             <p className="text-sm text-zinc-500 uppercase tracking-widest">Vedic Love & Relationship Expert</p>

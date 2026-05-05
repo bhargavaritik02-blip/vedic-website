@@ -1,13 +1,14 @@
 import { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence, useInView, animate } from 'motion/react';
-import { Phone, CheckCircle, ChevronDown, MessageCircle, Star, HeartCrack, Flame, Users } from 'lucide-react';
+import { Phone, CheckCircle, ChevronDown, MessageCircle, Star, HeartCrack, Flame, Users, Heart, Sparkles, Zap, Shield, Sun, Moon, Compass, Briefcase, Activity, Baby, Search } from 'lucide-react';
+import WhatsappIcon from '../components/WhatsappIcon';
 import { Link } from 'react-router-dom';
 import Header from '../components/Header';
 import SEO from '../components/SEO';
 
 function FaqItem({ question, answer, isOpen, onClick }: { question: string, answer: string, isOpen: boolean, onClick: () => void, key?: string | number }) {
   return (
-    <div className="border-b border-zinc-800 last:border-0 relative z-10">
+    <div className="border-b border-zinc-800/60 last:border-0 relative z-10">
       <button 
         onClick={onClick}
         className="w-full flex items-center justify-between py-5 text-left focus:outline-none group"
@@ -18,7 +19,7 @@ function FaqItem({ question, answer, isOpen, onClick }: { question: string, answ
         <motion.div
           animate={{ rotate: isOpen ? 180 : 0 }}
           transition={{ duration: 0.4, ease: "easeOut" }}
-          className={`shrink-0 ml-4 p-1 rounded-full transition-colors ${isOpen ? 'bg-amber-500/20 text-amber-400' : 'bg-zinc-900 text-zinc-400 group-hover:bg-zinc-700'}`}
+          className={`shrink-0 ml-4 p-1 rounded-full transition-colors ${isOpen ? 'bg-amber-500/20 text-amber-400' : 'bg-zinc-800 text-zinc-400 group-hover:bg-zinc-700'}`}
         >
           <ChevronDown className="w-5 h-5" />
         </motion.div>
@@ -44,6 +45,7 @@ function FaqItem({ question, answer, isOpen, onClick }: { question: string, answ
 
 export default function Services() {
   const [openFaqIndex, setOpenFaqIndex] = useState<number | null>(0);
+  const [faqSearchQuery, setFaqSearchQuery] = useState('');
 
   const testimonials = [
     { text: "I got my love back within days. Amazing experience.", author: "Ritik Sharma", image: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&h=150&fit=crop&crop=faces&q=80" },
@@ -57,7 +59,10 @@ export default function Services() {
     { question: "How fast will I get results?", answer: "Results can vary, but many of our clients start noticing positive changes within a few days of following our guided solutions." },
     { question: "Is my information confidential?", answer: "Yes, 100%. We take your privacy very seriously. All conversations and shared details are completely private and never shared." },
     { question: "Can all love problems be solved?", answer: "Most love problems stem from misunderstandings, negativity, or astrological misalignments. We provide highly effective spiritual and practical solutions for over 95% of cases." },
-    { question: "Do I need to visit physically?", answer: "No, you don't. You can get our complete guidance and problem resolution through phone calls and WhatsApp from the comfort of your home." }
+    { question: "Do I need to visit physically?", answer: "No, you don't. You can get our complete guidance and problem resolution through phone calls and WhatsApp from the comfort of your home." },
+    { question: "Are the astrological remedies safe?", answer: "Absolutely. All our remedies are purely based on traditional Vedic astrology, positive spiritual prayers, and positive energies. They are 100% safe and have no adverse side effects." },
+    { question: "What details do you need for a consultation?", answer: "Usually, your name, date of birth, time of birth, and place of birth are extremely helpful for an accurate astrological reading. Even if you don't have exact details, we can use other Vedic methods." },
+    { question: "How do I start the consultation process?", answer: "Simply click on the WhatsApp button or call us directly. We will listen to your situation briefly and connect you with the expert for a detailed guidance session." }
   ];
 
   const serviceCards = [
@@ -95,8 +100,90 @@ export default function Services() {
       desc: "If you are facing delays or obstacles in marriage, we provide guidance to remove all barriers and ensure a successful marriage.",
       bullets: ["Remove obstacles", "Positive results", "Strong future"],
       bgImage: "https://images.unsplash.com/photo-1511285560929-80b456fea0bc?w=600&auto=format&fit=crop&q=80"
+    },
+    {
+      title: "Intercaste Marriage Specialist",
+      icon: <Heart className="w-8 h-8 text-amber-500" />,
+      desc: "Overcome family objections and societal pressures. Get expert astrological remedies to ensure a smooth intercaste marriage.",
+      bullets: ["Family approval", "Remove blockages", "Peaceful marriage"],
+      bgImage: "https://images.unsplash.com/photo-1583939003579-730e3918a45a?w=600&auto=format&fit=crop&q=80"
+    },
+    {
+      title: "Extra Marital Affair Solution",
+      icon: <Shield className="w-8 h-8 text-amber-500" />,
+      desc: "Is a third person ruining your marriage? We offer powerful solutions to stop extra-marital affairs and save your relationship.",
+      bullets: ["Stop affairs", "Regain loyalty", "Save your family"],
+      bgImage: "https://images.unsplash.com/photo-1529156069898-49953eb1f5bc?w=600&auto=format&fit=crop&q=80"
+    },
+    {
+      title: "Vashikaran Specialist",
+      icon: <Sparkles className="w-8 h-8 text-amber-500" />,
+      desc: "Positive Vashikaran services to bring back lost love, control difficult situations, and attract positivity into your life.",
+      bullets: ["Positive methods", "Safe to use", "Immediate effects"],
+      bgImage: "https://images.unsplash.com/photo-1518531933037-91b2f5f229cc?w=600&auto=format&fit=crop&q=80"
+    },
+    {
+      title: "Black Magic Removal",
+      icon: <Zap className="w-8 h-8 text-amber-500" />,
+      desc: "Protect yourself from evil eyes and negative energies. Get complete removal of black magic and spiritual protection.",
+      bullets: ["Complete cleansing", "Lifetime protection", "Spiritual healing"],
+      bgImage: "https://images.unsplash.com/photo-1506477331477-33d5d8b3dc85?w=600&auto=format&fit=crop&q=80"
+    },
+    {
+      title: "Family Dispute Solution",
+      icon: <Users className="w-8 h-8 text-amber-500" />,
+      desc: "Resolve property conflicts, misunderstandings, and generations of family disputes through powerful astrological guidance.",
+      bullets: ["Peace in home", "Resolve conflicts", "United family"],
+      bgImage: "https://images.unsplash.com/photo-1511895426328-dc8714191300?w=600&auto=format&fit=crop&q=80"
+    },
+    {
+      title: "Business Problem Solution",
+      icon: <Briefcase className="w-8 h-8 text-amber-500" />,
+      desc: "Facing continuous losses in business? Get expert astrological advice to remove hurdles and attract financial growth.",
+      bullets: ["Financial growth", "Remove blockages", "Attract success"],
+      bgImage: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=600&auto=format&fit=crop&q=80"
+    },
+    {
+      title: "Career & Job Solutions",
+      icon: <Compass className="w-8 h-8 text-amber-500" />,
+      desc: "Not getting promoted? Unemployed? Find the right career path and attract better job opportunities with our guidance.",
+      bullets: ["Job success", "Career growth", "Clear obstacles"],
+      bgImage: "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=600&auto=format&fit=crop&q=80"
+    },
+    {
+      title: "Kundli Dosh Nivaran",
+      icon: <Sun className="w-8 h-8 text-amber-500" />,
+      desc: "Manglik Dosh, Kaal Sarp Dosh, and other negative planetary alignments can ruin your life. Get perfect remedies.",
+      bullets: ["Accurate analysis", "Powerful poojas", "Peaceful life"],
+      bgImage: "https://images.unsplash.com/photo-1533050487297-09b450131914?w=600&auto=format&fit=crop&q=80"
+    },
+    {
+      title: "Childless Problem Solution",
+      icon: <Baby className="w-8 h-8 text-amber-500" />,
+      desc: "Suffering from childlessness despite medical treatments? Astrological remedies can help you achieve the joy of parenthood.",
+      bullets: ["Spiritual remedies", "Conception chances", "Happy family"],
+      bgImage: "https://images.unsplash.com/photo-1519689680058-324335c77eba?w=600&auto=format&fit=crop&q=80"
+    },
+    {
+      title: "Health Problem Solutions",
+      icon: <Activity className="w-8 h-8 text-amber-500" />,
+      desc: "Continuous sickness without medical explanation? We offer spiritual healing and remedies to improve your well-being.",
+      bullets: ["Spiritual healing", "Mental peace", "Better health"],
+      bgImage: "https://images.unsplash.com/photo-1506126613408-eca07ce68773?w=600&auto=format&fit=crop&q=80"
+    },
+    {
+      title: "Divorce Problem Solution",
+      icon: <Moon className="w-8 h-8 text-amber-500" />,
+      desc: "Save your marriage from divorce. If you or your partner are considering separation, our guidance can help you reconcile.",
+      bullets: ["Stop divorce", "Rebuild trust", "Happy marriage"],
+      bgImage: "https://images.unsplash.com/photo-1469334031218-e382a71b716b?w=600&auto=format&fit=crop&q=80"
     }
   ];
+
+  const filteredFaqs = faqs.filter(faq => 
+    faq.question.toLowerCase().includes(faqSearchQuery.toLowerCase()) || 
+    faq.answer.toLowerCase().includes(faqSearchQuery.toLowerCase())
+  );
 
   const structuredData = {
     "@context": "https://schema.org",
@@ -122,7 +209,7 @@ export default function Services() {
         structuredData={structuredData}
       />
       <Header activePage="services" />
-      <main className="max-w-[1100px] mx-auto px-4 sm:px-6 flex flex-col gap-12 py-10 pb-24 md:pb-10">
+      <main className="max-w-[1440px] mx-auto px-4 sm:px-6 flex flex-col gap-12 py-10 pb-24 md:pb-10">
         
         {/* HERO SECTION */}
         <section className="relative overflow-hidden rounded-[2rem] bg-gradient-to-b from-zinc-900 to-black border border-zinc-800 text-center py-12 px-6 sm:py-16 md:py-24">
@@ -131,7 +218,7 @@ export default function Services() {
           <span className="inline-block px-4 py-1.5 rounded-full bg-amber-500/10 border border-amber-500/20 text-amber-500 text-xs font-bold tracking-widest uppercase mb-6">
             Trusted by 55,000+ Satisfied Clients Across India
           </span>
-          <h1 className="text-2xl md:text-3xl lg:text-4xl lg:text-5xl lg:text-6xl font-serif mb-6 text-white leading-tight max-w-4xl mx-auto">
+          <h1 className="text-4xl md:text-5xl lg:text-6xl font-serif mb-6 text-white leading-tight max-w-4xl mx-auto">
             Powerful Astrology Solutions for <br/>
             <span className="text-amber-500 italic">Love & Relationship Problems</span>
           </h1>
@@ -146,18 +233,18 @@ export default function Services() {
               href="https://wa.me/919928433259?text=Hello%20I%20need%20solution%20for%20my%20problem"
               target="_blank"
               rel="noopener noreferrer"
-              className="w-full sm:w-auto bg-[#25D366] hover:bg-[#20bd5a] text-white font-bold py-3.5 px-8 rounded-xl flex items-center justify-center gap-2 transition-all shadow-lg shadow-[#25D366]/20"
+              className="w-full sm:w-auto bg-[#25D366] hover:bg-[#20bd5a] text-white font-bold py-3.5 px-8 rounded-xl flex items-center justify-center gap-2 transition-all shadow-lg shadow-[#25D366]/20 group"
             >
-              <MessageCircle className="w-5 h-5" />
+              <WhatsappIcon className="w-5 h-5 group-hover:animate-[bounce_1s_infinite]" />
               <span>Chat on WhatsApp</span>
             </motion.a>
             <motion.a 
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               href="tel:+919928433259" 
-              className="w-full sm:w-auto bg-amber-600 hover:bg-amber-500 text-white font-bold py-3.5 px-8 rounded-xl flex items-center justify-center gap-2 transition-all shadow-lg shadow-amber-600/20"
+              className="w-full sm:w-auto bg-amber-600 hover:bg-amber-500 text-white font-bold py-3.5 px-8 rounded-xl flex items-center justify-center gap-2 transition-all shadow-lg shadow-amber-600/20 group"
             >
-              <Phone className="w-5 h-5" />
+              <Phone className="w-5 h-5 group-hover:animate-[bounce_1s_infinite]" />
               <span>Call Now</span>
             </motion.a>
           </div>
@@ -203,11 +290,11 @@ export default function Services() {
                 </ul>
               </div>
               <div className="grid grid-cols-2 gap-3 mt-auto relative z-10">
-                <a href="https://wa.me/919928433259?text=Hello%20I%20need%20solution%20for%20my%20problem" className="bg-zinc-900 hover:bg-zinc-700 text-white text-xs font-bold py-2.5 rounded-lg flex items-center justify-center gap-1.5 transition-colors">
-                  <MessageCircle className="w-4 h-4 text-[#25D366]" /> WhatsApp
+                <a href="https://wa.me/919928433259?text=Hello%20I%20need%20solution%20for%20my%20problem" className="bg-zinc-800 hover:bg-zinc-700 text-white text-xs font-bold py-2.5 rounded-lg flex items-center justify-center gap-1.5 transition-colors group">
+                  <WhatsappIcon className="w-4 h-4 text-[#25D366] group-hover:animate-[bounce_1s_infinite]" /> WhatsApp
                 </a>
-                <a href="tel:+919928433259" className="bg-amber-600/10 hover:bg-amber-600/20 text-amber-500 text-xs font-bold py-2.5 rounded-lg flex items-center justify-center gap-1.5 transition-colors border border-amber-600/30">
-                  <Phone className="w-4 h-4" /> Call
+                <a href="tel:+919928433259" className="bg-amber-600/10 hover:bg-amber-600/20 text-amber-500 text-xs font-bold py-2.5 rounded-lg flex items-center justify-center gap-1.5 transition-colors border border-amber-600/30 group">
+                  <Phone className="w-4 h-4 group-hover:animate-[bounce_1s_infinite]" /> Call
                 </a>
               </div>
             </motion.div>
@@ -215,9 +302,9 @@ export default function Services() {
         </section>
 
         {/* WHY CHOOSE US */}
-        <section className="bg-zinc-900 border border-zinc-800 rounded-[2rem] p-6 sm:p-8 md:p-14 flex flex-col lg:flex-row gap-8 lg:gap-12 items-center">
+        <section className="bg-zinc-900/40 border border-zinc-800 rounded-[2rem] p-6 sm:p-8 md:p-14 flex flex-col lg:flex-row gap-8 lg:gap-12 items-center">
           <div className="w-full lg:w-1/2 mb-4 lg:mb-0 text-center lg:text-left">
-            <h2 className="text-2xl md:text-3xl lg:text-4xl font-serif text-white mb-6">
+            <h2 className="text-3xl md:text-4xl font-serif text-white mb-6">
               Why <span className="text-amber-500">55,000+</span> Clients Trust Us?
             </h2>
             <p className="text-zinc-400 leading-relaxed mb-8">
@@ -238,7 +325,7 @@ export default function Services() {
               "100% privacy and confidentiality",
               "Affordable and genuine services"
             ].map((point, idx) => (
-              <div key={idx} className="bg-zinc-900 border border-zinc-800 rounded-xl p-4 flex items-start gap-4">
+              <div key={idx} className="bg-zinc-950 border border-zinc-800 rounded-xl p-4 flex items-start gap-4">
                 <div className="w-6 h-6 rounded-full bg-amber-500/10 flex items-center justify-center shrink-0 mt-0.5">
                   <Star className="w-3.5 h-3.5 text-amber-500" fill="currentColor" />
                 </div>
@@ -250,9 +337,9 @@ export default function Services() {
 
         {/* PROCESS SECTION */}
         <section className="py-10 text-center">
-          <h2 className="text-2xl md:text-3xl lg:text-4xl font-serif text-white mb-12">How It <span className="text-amber-500">Works?</span></h2>
+          <h2 className="text-3xl md:text-4xl font-serif text-white mb-12">How It <span className="text-amber-500">Works?</span></h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 relative">
-            <div className="hidden lg:block absolute top-8 left-1/4 right-1/4 h-0.5 bg-zinc-900"></div>
+            <div className="hidden lg:block absolute top-8 left-1/4 right-1/4 h-0.5 bg-zinc-800"></div>
             {[
               { num: '1', title: 'Contact Us', desc: 'Contact on WhatsApp or Call' },
               { num: '2', title: 'Share Truth', desc: 'Share your problem' },
@@ -271,13 +358,13 @@ export default function Services() {
         </section>
 
         {/* TESTIMONIALS */}
-        <section className="bg-zinc-900 border border-zinc-800 rounded-[2rem] p-6 sm:p-8 md:p-14">
+        <section className="bg-zinc-900/60 border border-zinc-800 rounded-[2rem] p-6 sm:p-8 md:p-14">
           <div className="text-center mb-12">
-            <h2 className="text-2xl md:text-3xl lg:text-4xl font-serif text-white mb-4">Real Words. <span className="text-amber-500">Real Results.</span></h2>
+            <h2 className="text-3xl md:text-4xl font-serif text-white mb-4">Real Words. <span className="text-amber-500">Real Results.</span></h2>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {testimonials.map((testi, idx) => (
-              <div key={idx} className="bg-zinc-900 border border-zinc-800 rounded-2xl p-6 relative">
+              <div key={idx} className="bg-zinc-950 border border-zinc-800 rounded-2xl p-6 relative">
                 <div className="flex gap-1 mb-4 text-amber-500">
                   <Star className="w-4 h-4" fill="currentColor" />
                   <Star className="w-4 h-4" fill="currentColor" />
@@ -298,18 +385,38 @@ export default function Services() {
         {/* FAQ SECTION */}
         <section className="max-w-3xl mx-auto w-full py-10">
           <div className="text-center mb-10">
-            <h2 className="text-2xl md:text-3xl lg:text-4xl font-serif text-white mb-4">Frequently Asked <span className="text-amber-500">Questions</span></h2>
+            <h2 className="text-3xl md:text-4xl font-serif text-white mb-4">Frequently Asked <span className="text-amber-500">Questions</span></h2>
           </div>
-          <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-4 sm:p-8 relative">
-            {faqs.map((faq, index) => (
-              <FaqItem
-                key={index}
-                question={faq.question}
-                answer={faq.answer}
-                isOpen={openFaqIndex === index}
-                onClick={() => setOpenFaqIndex(openFaqIndex === index ? null : index)}
-              />
-            ))}
+          
+          <div className="mb-8 relative max-w-xl mx-auto">
+            <div className="absolute inset-y-0 left-4 flex items-center pointer-events-none">
+              <Search className="h-5 w-5 text-zinc-500" />
+            </div>
+            <input
+              type="text"
+              placeholder="Search for a question..."
+              value={faqSearchQuery}
+              onChange={(e) => setFaqSearchQuery(e.target.value)}
+              className="w-full bg-zinc-900 border border-zinc-700 focus:border-amber-500 rounded-xl py-3 pl-12 pr-4 text-white outline-none transition-colors"
+            />
+          </div>
+
+          <div className="bg-zinc-900/50 border border-zinc-800 rounded-2xl p-4 sm:p-8 relative">
+            {filteredFaqs.length > 0 ? (
+              filteredFaqs.map((faq, index) => (
+                <FaqItem
+                  key={index}
+                  question={faq.question}
+                  answer={faq.answer}
+                  isOpen={openFaqIndex === index}
+                  onClick={() => setOpenFaqIndex(openFaqIndex === index ? null : index)}
+                />
+              ))
+            ) : (
+              <div className="text-center py-6">
+                <p className="text-zinc-500">No matching questions found.</p>
+              </div>
+            )}
           </div>
         </section>
 
@@ -321,11 +428,11 @@ export default function Services() {
               Don't let your problem grow bigger. Take action now and get instant help to restore the peace and love you deserve.
             </p>
             <div className="flex flex-col sm:flex-row justify-center gap-4">
-              <a href="https://wa.me/919928433259?text=Hello%20I%20need%20solution%20for%20my%20problem" target="_blank" rel="noopener noreferrer" className="w-full sm:w-auto bg-zinc-900 text-orange-600 hover:bg-zinc-100 font-bold py-4 px-8 rounded-xl flex items-center justify-center gap-3 transition-colors shadow-xl">
-                <MessageCircle className="w-5 h-5 text-[#25D366]" /> Chat on WhatsApp
+              <a href="https://wa.me/919928433259?text=Hello%20I%20need%20solution%20for%20my%20problem" target="_blank" rel="noopener noreferrer" className="w-full sm:w-auto bg-white text-orange-600 hover:bg-zinc-100 font-bold py-4 px-8 rounded-xl flex items-center justify-center gap-3 transition-colors shadow-xl group">
+                <WhatsappIcon className="w-5 h-5 text-[#25D366] group-hover:animate-[bounce_1s_infinite]" /> Chat on WhatsApp
               </a>
-              <a href="tel:+919928433259" className="w-full sm:w-auto bg-black/20 hover:bg-black/30 border border-white/30 text-white font-bold py-4 px-8 rounded-xl flex items-center justify-center gap-3 transition-colors">
-                <Phone className="w-5 h-5" /> Call Directly
+              <a href="tel:+919928433259" className="w-full sm:w-auto bg-black/20 hover:bg-black/30 border border-white/30 text-white font-bold py-4 px-8 rounded-xl flex items-center justify-center gap-3 transition-colors group">
+                <Phone className="w-5 h-5 group-hover:animate-[bounce_1s_infinite]" /> Call Directly
               </a>
             </div>
           </div>
@@ -334,8 +441,8 @@ export default function Services() {
       </main>
 
       {/* FOOTER */}
-      <footer id="contact" className="border-t border-zinc-800 bg-black mt-10 pb-20 md:pb-0">
-        <div className="max-w-[1100px] mx-auto px-6 py-8 flex flex-col md:flex-row justify-between items-center gap-6">
+      <footer id="contact" className="border-t border-zinc-900 bg-black mt-10 pb-20 md:pb-0">
+        <div className="max-w-[1440px] mx-auto px-6 py-8 flex flex-col md:flex-row justify-between items-center gap-6">
           <div className="text-center md:text-left">
             <h4 className="text-lg font-bold text-white mb-2">Astrologer Mannu Shastri Ji</h4>
             <p className="text-sm text-zinc-500 uppercase tracking-widest">Vedic Love & Relationship Expert</p>
@@ -345,11 +452,11 @@ export default function Services() {
             <Link to="/services" className="text-zinc-400 hover:text-amber-500 text-sm transition-colors">Services</Link>
           </div>
           <div className="flex items-center gap-4">
-            <a href="tel:+919928433259" className="text-zinc-400 hover:text-white flex items-center gap-2 text-sm transition-colors">
-              <Phone className="w-4 h-4" /> +91 9928433259
+            <a href="tel:+919928433259" className="text-zinc-400 hover:text-white flex items-center gap-2 text-sm transition-colors group">
+              <Phone className="w-4 h-4 group-hover:animate-[bounce_1s_infinite]" /> +91 9928433259
             </a>
-            <a href="https://wa.me/919928433259?text=Hello" target="_blank" rel="noopener noreferrer" className="text-zinc-400 hover:text-[#25D366] flex items-center gap-2 text-sm transition-colors">
-              <MessageCircle className="w-4 h-4" /> WhatsApp
+            <a href="https://wa.me/919928433259?text=Hello" target="_blank" rel="noopener noreferrer" className="text-zinc-400 hover:text-[#25D366] flex items-center gap-2 text-sm transition-colors group">
+              <WhatsappIcon className="w-4 h-4 group-hover:animate-[bounce_1s_infinite]" /> WhatsApp
             </a>
           </div>
         </div>

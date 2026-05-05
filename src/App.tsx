@@ -9,8 +9,9 @@ import Horoscope from './pages/Horoscope';
 import About from './pages/About';
 import Contact from './pages/Contact';
 import MobileCTA from './components/MobileCTA';
-import PromoPopup from './components/PromoPopup';
-import LiveActivity from './components/LiveActivity';
+import FreeConsultationPopup from './components/FreeConsultationPopup';
+import LiveActivityChat from './components/LiveActivityChat';
+import SEORoute from './pages/SEORoute';
 
 export default function App() {
   return (
@@ -25,10 +26,11 @@ export default function App() {
         <Route path="/horoscope" element={<Horoscope />} />
         <Route path="/about" element={<About />} />
         <Route path="/contact" element={<Contact />} />
+        <Route path="/:slug" element={<SEORoute />} />
       </Routes>
       <MobileCTA />
-      <PromoPopup />
-      <LiveActivity />
+      <FreeConsultationPopup />
+      <LiveActivityChat />
     </BrowserRouter>
   );
 }
